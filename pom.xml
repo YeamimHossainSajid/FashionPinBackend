@@ -32,6 +32,9 @@
         <module>fashion-discovery-service</module>
         <module>moodboard-service</module>
         <module>media-service</module>
+        <module>recommendation-service</module>
+        <module>outfit-detection-service</module>
+        <module>image-processing-service</module>
     </modules>
 
     <properties>
