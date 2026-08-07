@@ -23,6 +23,9 @@
         <module>discovery-service</module>
         <module>config-server</module>
         <module>api-gateway</module>
+        <module>auth-service</module>
+        <module>user-service</module>
+        <module>profile-service</module>
     </modules>
 
     <properties>
