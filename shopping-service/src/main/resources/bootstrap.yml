@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: shopping-service
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://localhost:8888}
+      username: ${CONFIG_SERVER_USERNAME:config}
+      password: ${CONFIG_SERVER_PASSWORD:config}
+      fail-fast: false
+      enabled: ${CONFIG_ENABLED:false}
+

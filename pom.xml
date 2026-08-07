@@ -37,6 +37,11 @@
         <module>image-processing-service</module>
         <module>ai-stylist-service</module>
         <module>virtual-tryon-service</module>
+        <module>shopping-service</module>
+        <module>order-service</module>
+        <module>payment-service</module>
+        <module>inventory-service</module>
+        <module>brand-integration-service</module>
     </modules>
 
     <properties>
