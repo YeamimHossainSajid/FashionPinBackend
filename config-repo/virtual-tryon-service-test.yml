@@ -1,0 +1,4 @@
+fashionpin:
+  service: virtual-tryon-service
+  profile: test
+

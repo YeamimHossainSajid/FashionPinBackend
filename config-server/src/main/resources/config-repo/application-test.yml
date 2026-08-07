@@ -1,0 +1,6 @@
+fashionpin:
+  environment: test
+logging:
+  level:
+    com.fashionpin: INFO
+

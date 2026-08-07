@@ -1,0 +1,8 @@
+server:
+  port: 8083
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/profile_db
+    username: fashionpin
+    password: fashionpin
+

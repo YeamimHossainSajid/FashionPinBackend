@@ -1,0 +1,8 @@
+server:
+  port: 8092
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/virtual_tryon_db
+    username: fashionpin
+    password: fashionpin
+

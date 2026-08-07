@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  security:
+    user:
+      name: ${CONFIG_SERVER_USERNAME:config}
+      password: ${CONFIG_SERVER_PASSWORD:config}
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:./config-repo, classpath:/config-repo
+        git:
+          uri: ${CONFIG_GIT_URI:}
+          default-label: main
+          clone-on-start: false
+
+server:
+  port: 8888
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  config: classpath:logback-spring.xml
+

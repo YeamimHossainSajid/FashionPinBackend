@@ -1,0 +1,8 @@
+server:
+  port: 8089
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/image_processing_db
+    username: fashionpin
+    password: fashionpin
+

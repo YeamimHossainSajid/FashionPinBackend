@@ -1,0 +1,8 @@
+server:
+  port: 8100
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/analytics_db
+    username: fashionpin
+    password: fashionpin
+

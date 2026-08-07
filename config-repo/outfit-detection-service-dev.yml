@@ -1,0 +1,4 @@
+fashionpin:
+  service: outfit-detection-service
+  profile: dev
+

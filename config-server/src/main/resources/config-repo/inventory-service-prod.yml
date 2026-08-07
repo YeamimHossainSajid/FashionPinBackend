@@ -1,0 +1,4 @@
+fashionpin:
+  service: inventory-service
+  profile: prod
+

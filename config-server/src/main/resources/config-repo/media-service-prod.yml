@@ -1,0 +1,4 @@
+fashionpin:
+  service: media-service
+  profile: prod
+

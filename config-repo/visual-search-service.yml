@@ -1,0 +1,8 @@
+server:
+  port: 8090
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/visual_search_db
+    username: fashionpin
+    password: fashionpin
+

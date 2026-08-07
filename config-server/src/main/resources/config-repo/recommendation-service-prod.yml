@@ -1,0 +1,4 @@
+fashionpin:
+  service: recommendation-service
+  profile: prod
+

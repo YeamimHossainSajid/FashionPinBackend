@@ -1,0 +1,8 @@
+server:
+  port: 8091
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/ai_stylist_db
+    username: fashionpin
+    password: fashionpin
+

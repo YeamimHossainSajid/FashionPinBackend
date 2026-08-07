@@ -1,0 +1,4 @@
+fashionpin:
+  service: auth-service
+  profile: prod
+

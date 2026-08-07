@@ -1,0 +1,4 @@
+fashionpin:
+  service: ai-stylist-service
+  profile: prod
+

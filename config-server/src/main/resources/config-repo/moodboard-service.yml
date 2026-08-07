@@ -1,0 +1,8 @@
+server:
+  port: 8093
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/moodboard_db
+    username: fashionpin
+    password: fashionpin
+

@@ -1,0 +1,4 @@
+fashionpin:
+  service: fashion-discovery-service
+  profile: prod
+

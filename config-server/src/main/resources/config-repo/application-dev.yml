@@ -1,0 +1,6 @@
+fashionpin:
+  environment: dev
+logging:
+  level:
+    com.fashionpin: DEBUG
+

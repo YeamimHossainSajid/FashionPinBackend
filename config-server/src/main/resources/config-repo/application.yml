@@ -1,0 +1,23 @@
+fashionpin:
+  cors:
+    allowed-origins: "*"
+  security:
+    jwt:
+      issuer: fashion-pin
+      # Placeholder secret only for foundation local profiles.
+      secret: change-me-in-production
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    root: INFO
+    com.fashionpin: INFO
+

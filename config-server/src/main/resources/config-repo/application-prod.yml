@@ -1,0 +1,6 @@
+fashionpin:
+  environment: prod
+logging:
+  level:
+    com.fashionpin: INFO
+

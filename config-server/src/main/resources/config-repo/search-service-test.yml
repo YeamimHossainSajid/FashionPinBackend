@@ -1,0 +1,4 @@
+fashionpin:
+  service: search-service
+  profile: test
+
