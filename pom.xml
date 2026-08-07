@@ -29,6 +29,9 @@
         <module>product-service</module>
         <module>search-service</module>
         <module>visual-search-service</module>
+        <module>fashion-discovery-service</module>
+        <module>moodboard-service</module>
+        <module>media-service</module>
     </modules>
 
     <properties>
