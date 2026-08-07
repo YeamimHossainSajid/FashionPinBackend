@@ -42,6 +42,8 @@
         <module>payment-service</module>
         <module>inventory-service</module>
         <module>brand-integration-service</module>
+        <module>notification-service</module>
+        <module>analytics-service</module>
     </modules>
 
     <properties>
