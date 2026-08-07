@@ -26,17 +26,16 @@
         <module>auth-service</module>
         <module>user-service</module>
         <module>profile-service</module>
+        <module>fashion-discovery-service</module>
         <module>product-service</module>
         <module>search-service</module>
-        <module>visual-search-service</module>
-        <module>fashion-discovery-service</module>
-        <module>moodboard-service</module>
-        <module>media-service</module>
         <module>recommendation-service</module>
         <module>outfit-detection-service</module>
         <module>image-processing-service</module>
+        <module>visual-search-service</module>
         <module>ai-stylist-service</module>
         <module>virtual-tryon-service</module>
+        <module>moodboard-service</module>
         <module>shopping-service</module>
         <module>order-service</module>
         <module>payment-service</module>
@@ -44,6 +43,7 @@
         <module>brand-integration-service</module>
         <module>notification-service</module>
         <module>analytics-service</module>
+        <module>media-service</module>
     </modules>
 
     <properties>
