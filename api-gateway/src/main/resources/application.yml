@@ -1,0 +1,248 @@
+spring:
+  application:
+    name: api-gateway
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+
+      - id: auth-service
+        uri: lb://auth-service
+        predicates:
+          - Path=/api/v1/auth/**
+        filters:
+          - RewritePath=/api/v1/auth(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: user-service
+        uri: lb://user-service
+        predicates:
+          - Path=/api/v1/user/**
+        filters:
+          - RewritePath=/api/v1/user(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: profile-service
+        uri: lb://profile-service
+        predicates:
+          - Path=/api/v1/profile/**
+        filters:
+          - RewritePath=/api/v1/profile(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: fashion-discovery-service
+        uri: lb://fashion-discovery-service
+        predicates:
+          - Path=/api/v1/fashion-discovery/**
+        filters:
+          - RewritePath=/api/v1/fashion-discovery(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: product-service
+        uri: lb://product-service
+        predicates:
+          - Path=/api/v1/product/**
+        filters:
+          - RewritePath=/api/v1/product(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: search-service
+        uri: lb://search-service
+        predicates:
+          - Path=/api/v1/search/**
+        filters:
+          - RewritePath=/api/v1/search(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: recommendation-service
+        uri: lb://recommendation-service
+        predicates:
+          - Path=/api/v1/recommendation/**
+        filters:
+          - RewritePath=/api/v1/recommendation(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: outfit-detection-service
+        uri: lb://outfit-detection-service
+        predicates:
+          - Path=/api/v1/outfit-detection/**
+        filters:
+          - RewritePath=/api/v1/outfit-detection(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: image-processing-service
+        uri: lb://image-processing-service
+        predicates:
+          - Path=/api/v1/image-processing/**
+        filters:
+          - RewritePath=/api/v1/image-processing(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: visual-search-service
+        uri: lb://visual-search-service
+        predicates:
+          - Path=/api/v1/visual-search/**
+        filters:
+          - RewritePath=/api/v1/visual-search(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: ai-stylist-service
+        uri: lb://ai-stylist-service
+        predicates:
+          - Path=/api/v1/ai-stylist/**
+        filters:
+          - RewritePath=/api/v1/ai-stylist(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: virtual-tryon-service
+        uri: lb://virtual-tryon-service
+        predicates:
+          - Path=/api/v1/virtual-tryon/**
+        filters:
+          - RewritePath=/api/v1/virtual-tryon(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: moodboard-service
+        uri: lb://moodboard-service
+        predicates:
+          - Path=/api/v1/moodboard/**
+        filters:
+          - RewritePath=/api/v1/moodboard(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: shopping-service
+        uri: lb://shopping-service
+        predicates:
+          - Path=/api/v1/shopping/**
+        filters:
+          - RewritePath=/api/v1/shopping(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: order-service
+        uri: lb://order-service
+        predicates:
+          - Path=/api/v1/order/**
+        filters:
+          - RewritePath=/api/v1/order(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: payment-service
+        uri: lb://payment-service
+        predicates:
+          - Path=/api/v1/payment/**
+        filters:
+          - RewritePath=/api/v1/payment(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: inventory-service
+        uri: lb://inventory-service
+        predicates:
+          - Path=/api/v1/inventory/**
+        filters:
+          - RewritePath=/api/v1/inventory(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: brand-integration-service
+        uri: lb://brand-integration-service
+        predicates:
+          - Path=/api/v1/brand-integration/**
+        filters:
+          - RewritePath=/api/v1/brand-integration(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: notification-service
+        uri: lb://notification-service
+        predicates:
+          - Path=/api/v1/notification/**
+        filters:
+          - RewritePath=/api/v1/notification(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: analytics-service
+        uri: lb://analytics-service
+        predicates:
+          - Path=/api/v1/analytics/**
+        filters:
+          - RewritePath=/api/v1/analytics(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+      - id: media-service
+        uri: lb://media-service
+        predicates:
+          - Path=/api/v1/media/**
+        filters:
+          - RewritePath=/api/v1/media(?<segment>/?.*), /api/v1${segment}
+          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+  health:
+    redis:
+      enabled: false
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+gateway:
+  cors:
+    allowed-origins: "*"
+
+logging:
+  config: classpath:logback-spring.xml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+management:
+  tracing:
+    enabled: false
+
