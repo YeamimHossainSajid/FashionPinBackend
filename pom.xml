@@ -26,6 +26,9 @@
         <module>auth-service</module>
         <module>user-service</module>
         <module>profile-service</module>
+        <module>product-service</module>
+        <module>search-service</module>
+        <module>visual-search-service</module>
     </modules>
 
     <properties>
