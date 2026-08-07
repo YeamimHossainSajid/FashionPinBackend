@@ -35,6 +35,8 @@
         <module>recommendation-service</module>
         <module>outfit-detection-service</module>
         <module>image-processing-service</module>
+        <module>ai-stylist-service</module>
+        <module>virtual-tryon-service</module>
     </modules>
 
     <properties>

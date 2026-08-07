@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.fashionpin.virtualtryonservice.grpc.generated";
+option java_outer_classname = "HealthProto";
+
+package fashionpin.virtualtryonservice;
+
+service HealthService {
+  rpc Check (HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  string status = 1;
+  string service = 2;
+}
+
