@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "virtual-tryon-service"
+version = "1.0.0"
+description = "Production-grade Virtual Try-On AI Service for Fashion Pin"
+authors = [{ name = "Fashion Pin AI Team" }]
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
