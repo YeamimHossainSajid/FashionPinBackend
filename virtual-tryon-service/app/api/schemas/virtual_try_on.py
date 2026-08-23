@@ -7,6 +7,9 @@ class GarmentCategory(str, Enum):
     LOWER_BODY = "LOWER_BODY"
     DRESS = "DRESS"
     FULL_BODY = "FULL_BODY"
+    TOPS = "tops"
+    BOTTOMS = "bottoms"
+    ONE_PIECES = "one-pieces"
 
 class JobStatus(str, Enum):
     QUEUED = "QUEUED"
@@ -21,8 +24,9 @@ class JobStatus(str, Enum):
 class TryOnConfig(BaseModel):
     seed: Optional[int] = Field(default=42, description="Random seed for deterministic generation")
     num_inference_steps: int = Field(default=30, ge=10, le=100, description="Diffusion steps")
-    guidance_scale: float = Field(default=2.5, ge=1.0, le=10.0, description="CFG scale")
+    guidance_scale: float = Field(default=1.5, ge=1.0, le=10.0, description="CFG scale")
     denoise_strength: float = Field(default=1.0, ge=0.1, le=1.0, description="Denoising strength")
+    garment_photo_type: str = Field(default="model", description="Garment photo type: 'model' or 'flat-lay'")
     preserve_face: bool = Field(default=True, description="Preserve person facial identity")
     preserve_hair: bool = Field(default=True, description="Preserve person hair region")
     preserve_hands: bool = Field(default=True, description="Preserve person hands & arms")
