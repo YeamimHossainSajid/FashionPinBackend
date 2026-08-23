@@ -1,13 +1,32 @@
-# syntax=docker/dockerfile:1
-FROM eclipse-temurin:21-jdk-alpine AS build
-WORKDIR /workspace
-COPY . .
-RUN ./mvnw -pl virtual-tryon-service -am -DskipTests package
+# Production NVIDIA CUDA 12 Runtime Dockerfile for Virtual Try-On AI Service
+FROM nvidia/cuda:12.1.1-runtime-ubuntu22.04 AS base
 
-FROM eclipse-temurin:21-jre-alpine
+ENV PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    PORT=8092
+
 WORKDIR /app
-RUN addgroup -S fashionpin && adduser -S fashionpin -G fashionpin
-USER fashionpin
-COPY --from=build /workspace/virtual-tryon-service/target/virtual-tryon-service-*.jar app.jar
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 \
+    python3.12-venv \
+    python3-pip \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
 EXPOSE 8092
-ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-jar", "app.jar"]
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8092/health || exit 1
+
+CMD ["python3.12", "-m", "app.main"]
