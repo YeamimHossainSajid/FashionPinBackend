@@ -1,19 +1,26 @@
 import os
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(env_file=".env", extra="ignore")
+
     service_name: str = Field(default="virtual-tryon-service", alias="SERVICE_NAME")
     service_port: int = Field(default=8092, alias="SERVICE_PORT")
     debug: bool = Field(default=False, alias="DEBUG")
     env: str = Field(default="development", alias="ENV")
 
-    model_name: str = Field(default="catvton", alias="MODEL_NAME")
-    model_version: str = Field(default="1.0.0", alias="MODEL_VERSION")
+    model_name: str = Field(default="fashn-vton", alias="MODEL_NAME")
+    model_version: str = Field(default="1.5", alias="MODEL_VERSION")
     pipeline_version: str = Field(default="1.0.0", alias="PIPELINE_VERSION")
-    model_path: str = Field(default="zhengchong/CatVTON", alias="MODEL_PATH")
+    model_path: str = Field(default="./weights", alias="MODEL_PATH")
     device: str = Field(default="cuda", alias="DEVICE")
-    dtype: str = Field(default="float16", alias="DTYPE")
+    dtype: str = Field(default="bfloat16", alias="DTYPE")
+
+    VTON_MODEL_PATH: str = Field(default="./weights", alias="VTON_MODEL_PATH")
+    VTON_MODEL_VERSION: str = Field(default="1.5", alias="VTON_MODEL_VERSION")
+    VTON_DEVICE: str = Field(default="cuda", alias="VTON_DEVICE")
+    VTON_DTYPE: str = Field(default="bfloat16", alias="VTON_DTYPE")
 
     image_width: int = Field(default=768, alias="IMAGE_WIDTH")
     image_height: int = Field(default=1024, alias="IMAGE_HEIGHT")
@@ -34,9 +41,5 @@ class Settings(BaseSettings):
     kafka_group_id: str = Field(default="virtual-tryon-service", alias="KAFKA_GROUP_ID")
 
     temp_directory: str = Field(default="/tmp/vton", alias="TEMP_DIRECTORY")
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 settings = Settings()
