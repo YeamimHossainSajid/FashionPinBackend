@@ -43,10 +43,7 @@ spring:
       - id: product-service
         uri: lb://product-service
         predicates:
-          - Path=/api/v1/product/**
-        filters:
-          - RewritePath=/api/v1/product(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/products/**, /api/v1/product/**
 
       - id: search-service
         uri: lb://search-service
@@ -147,10 +144,7 @@ spring:
       - id: brand-integration-service
         uri: lb://brand-integration-service
         predicates:
-          - Path=/api/v1/brand-integration/**
-        filters:
-          - RewritePath=/api/v1/brand-integration(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/brands/**, /api/v1/brand-integration/**
 
       - id: notification-service
         uri: lb://notification-service
@@ -171,10 +165,7 @@ spring:
       - id: media-service
         uri: lb://media-service
         predicates:
-          - Path=/api/v1/media/**
-        filters:
-          - RewritePath=/api/v1/media(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/media/**, /api/v1/media/**
 
 server:
   port: 8080
