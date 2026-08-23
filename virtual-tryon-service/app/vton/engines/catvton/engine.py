@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union
 from PIL import Image
 from app.vton.base import VTONEngine, PersonData, GarmentData, VTONOutput
 from app.vton.registry import VTONRegistry
@@ -21,16 +21,23 @@ class CatVTONEngine(VTONEngine):
         self,
         person_data: PersonData,
         garment_data: GarmentData,
-        config: TryOnConfig
+        config: Union[TryOnConfig, Dict[str, Any], None] = None
     ) -> VTONOutput:
         if not self._is_ready:
             self.initialize()
+
+        if isinstance(config, dict):
+            cfg_obj = TryOnConfig(**config)
+        elif isinstance(config, TryOnConfig):
+            cfg_obj = config
+        else:
+            cfg_obj = TryOnConfig()
 
         result_image = CatVTONInference.run_inference(
             self._pipeline_meta,
             person_data,
             garment_data,
-            config
+            cfg_obj
         )
 
         return VTONOutput(
@@ -39,10 +46,10 @@ class CatVTONEngine(VTONEngine):
             model_version=settings.model_version,
             pipeline_version=settings.pipeline_version,
             metadata={
-                "seed": config.seed,
-                "num_inference_steps": config.num_inference_steps,
-                "guidance_scale": config.guidance_scale,
-                "denoise_strength": config.denoise_strength,
+                "seed": cfg_obj.seed,
+                "num_inference_steps": cfg_obj.num_inference_steps,
+                "guidance_scale": cfg_obj.guidance_scale,
+                "denoise_strength": cfg_obj.denoise_strength,
                 "device": self._pipeline_meta["device"],
             }
         )
