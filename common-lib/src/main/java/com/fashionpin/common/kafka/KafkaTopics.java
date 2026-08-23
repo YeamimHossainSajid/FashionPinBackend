@@ -1,6 +1,8 @@
 package com.fashionpin.common.kafka;
 
 public final class KafkaTopics {
+    public static final String USER_REGISTERED_V1 = "fashionpin.user.registered.v1";
+    public static final String USER_CREATED_V1 = "fashionpin.user.created.v1";
     public static final String USER_EVENTS = "fashionpin.user.events";
     public static final String ORDER_EVENTS = "fashionpin.order.events";
     public static final String PRODUCT_EVENTS = "fashionpin.product.events";
