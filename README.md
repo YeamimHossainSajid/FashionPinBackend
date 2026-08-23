@@ -213,9 +213,11 @@ GET /user-service/api/v1/health
   - Gateway routes & JWT security foundation (`api-gateway`).
   - Transactional Outbox pattern & consumer idempotency.
 
-- [ ] **Phase 2: Product & Fashion Discovery Domain (Remaining TODO)**
-  - Product catalog, inventory check, taxonomy & category APIs (`product-service`).
-  - Trending fashion pins & discovery feed (`fashion-discovery-service`).
+- [x] **Phase 2: Product Catalog & Visual Media Domain (Completed)**
+  - Hexagonal object storage abstraction & media metadata lifecycle (`media-service`).
+  - Brand catalog integration & provider abstractions (`brand-integration-service`).
+  - Product catalog aggregates with fashion attributes, OpenFeign validation, & Redis caching (`product-service`).
+  - Gateway routes & outbox events (`MediaCreated`, `BrandCreated`, `ProductCreated`, etc.).
 
 - [ ] **Phase 3: Moodboards & Social Graph Domain (Remaining TODO)**
   - User follow/following graph & social interactions (`profile-service`).

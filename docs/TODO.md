@@ -27,14 +27,27 @@ This document tracks completed implementation phases and remaining TODOs for fut
   - Edge routing for `/api/auth/**`, `/api/users/**`, `/api/profiles/**`.
   - Gateway `JwtAuthenticationFilter` for token validation and header enrichment (`X-User-Id`, `X-User-Roles`).
 
+### Phase 2: Product & Fashion Discovery Domain (Completed)
+- **`media-service`**:
+  - `Media` domain model (`id`, `ownerId`, `mediaType`, `storageKey`, `originalFilename`, `contentType`, `fileSize`, `width`, `height`, `status`, `createdAt`, `updatedAt`).
+  - Hexagonal object storage abstraction (`StoragePort` interface and `LocalStorageAdapter`).
+  - Endpoints: `POST /api/media/upload`, `GET /api/media/{id}`, `GET /api/media/{id}/metadata`, `DELETE /api/media/{id}`.
+  - Outbox events: `MediaCreatedEvent`, `MediaReadyEvent`, `MediaDeletedEvent`.
+- **`brand-integration-service`**:
+  - `Brand` domain model (`id`, `name`, `slug` [unique], `description`, `logoMediaId`, `website`, `status`, `createdAt`, `updatedAt`).
+  - Hexagonal integration abstractions (`BrandIntegrationPort`, `BrandCatalogProvider`).
+  - Endpoints: `POST /api/brands` (ADMIN), `GET /api/brands/{id}` (Public), `GET /api/brands` (Public), `PATCH /api/brands/{id}` (ADMIN), `DELETE /api/brands/{id}` (ADMIN).
+  - Outbox events: `BrandCreatedEvent`, `BrandUpdatedEvent`, `BrandDeletedEvent`.
+- **`product-service`**:
+  - `Product` aggregate model with fashion attributes (`gender`, `color`, `size`, `material`, `pattern`, `style`, `season`, `occasion`, `fit`).
+  - OpenFeign synchronous brand validation (`BrandServiceClient`).
+  - Redis caching (`@Cacheable` and `@CacheEvict`).
+  - Endpoints: `POST /api/products` (ADMIN), `GET /api/products/{id}` (Public), `GET /api/products` (Public, paginated & filtered), `PATCH /api/products/{id}` (ADMIN), `DELETE /api/products/{id}` (ADMIN).
+  - Outbox events: `ProductCreatedEvent`, `ProductUpdatedEvent`, `ProductDeletedEvent`.
+
 ---
 
 ## Remaining TODOs for Future Phases
-
-### Phase 2: Product & Fashion Discovery Domain
-- [ ] Product catalog, inventory check, taxonomy & category APIs (`product-service`).
-- [ ] Trending fashion pins, feed generation & discovery APIs (`fashion-discovery-service`).
-- [ ] Full-text search and catalog indexing (`search-service`).
 
 ### Phase 3: Moodboards & Social Graph Domain
 - [ ] User follow/following graph & social interactions (`profile-service`).
