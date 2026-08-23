@@ -20,26 +20,17 @@ spring:
       - id: auth-service
         uri: lb://auth-service
         predicates:
-          - Path=/api/v1/auth/**
-        filters:
-          - RewritePath=/api/v1/auth(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/auth/**, /api/v1/auth/**
 
       - id: user-service
         uri: lb://user-service
         predicates:
-          - Path=/api/v1/user/**
-        filters:
-          - RewritePath=/api/v1/user(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/users/**, /api/v1/user/**
 
       - id: profile-service
         uri: lb://profile-service
         predicates:
-          - Path=/api/v1/profile/**
-        filters:
-          - RewritePath=/api/v1/profile(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/profiles/**, /api/v1/profile/**
 
       - id: fashion-discovery-service
         uri: lb://fashion-discovery-service
