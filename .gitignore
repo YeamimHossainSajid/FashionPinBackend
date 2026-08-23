@@ -16,3 +16,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 storage/
 **/storage/
+venv/
+**/venv/
+benchmark_report.md
+**/benchmark_report.md
