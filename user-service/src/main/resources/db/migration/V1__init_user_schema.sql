@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR(36) PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    status VARCHAR(32) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS processed_events (
+    event_id VARCHAR(255) PRIMARY KEY,
+    event_type VARCHAR(255) NOT NULL,
+    processed_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS outbox_events (
+    id VARCHAR(36) PRIMARY KEY,
+    aggregate_type VARCHAR(255) NOT NULL,
+    aggregate_id VARCHAR(255) NOT NULL,
+    event_type VARCHAR(255) NOT NULL,
+    payload TEXT NOT NULL,
+    status VARCHAR(32) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    processed_at TIMESTAMP WITH TIME ZONE
+);
