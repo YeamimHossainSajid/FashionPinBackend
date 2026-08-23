@@ -142,6 +142,16 @@ spring:
     listener:
       auto-startup: false
 
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+grpc:
+  server:
+    port: 0
+
 ---
 spring:
   config:
