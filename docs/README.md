@@ -14,6 +14,7 @@ Start here when you need to maintain or extend this repo.
 | [CODE_GENERATION.md](./CODE_GENERATION.md) | `scripts/generate_foundation.py` — dangers and safe usage |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Bounded contexts and system style |
 | [FOLDER_STRUCTURE.md](./FOLDER_STRUCTURE.md) | What each package/folder is for |
+| [TODO.md](./TODO.md) | Implementation roadmap and remaining TODOs |
 | [adr/](./adr/) | Why key foundation decisions were made |
 
 Root entrypoint: [`../README.md`](../README.md)

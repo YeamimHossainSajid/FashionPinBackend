@@ -1,71 +1,47 @@
-# Kafka & Events
+# Kafka & Events (Phase 1 Implementation)
 
-## Status in foundation
-
-- Infrastructure wiring exists (producer factory, topic beans, sample event types).
-- **No business consumers** are implemented yet.
-- In `dev` / `test`, Kafka config/topic beans are profile-gated off (`@Profile("!dev")` / excluded autoconfig) so services start without a broker.
-
-## Shared topic constants
+## Implemented Topics & Event Schemas
 
 Source of truth: `common-lib` → `com.fashionpin.common.kafka.KafkaTopics`
 
-| Constant | Topic name |
-|----------|------------|
-| `USER_EVENTS` | `fashionpin.user.events` |
-| `ORDER_EVENTS` | `fashionpin.order.events` |
-| `PRODUCT_EVENTS` | `fashionpin.product.events` |
-| `NOTIFICATION_EVENTS` | `fashionpin.notification.events` |
-| `ANALYTICS_EVENTS` | `fashionpin.analytics.events` |
-| `MEDIA_EVENTS` | `fashionpin.media.events` |
-| `PAYMENT_EVENTS` | `fashionpin.payment.events` |
-| `INVENTORY_EVENTS` | `fashionpin.inventory.events` |
+| Topic Constant | Topic Name | Producer Service | Consumer Service | Payload Class |
+|----------------|------------|------------------|------------------|---------------|
+| `USER_REGISTERED_V1` | `fashionpin.user.registered.v1` | `auth-service` | `user-service` | `UserRegisteredEvent` |
+| `USER_CREATED_V1` | `fashionpin.user.created.v1` | `user-service` | `profile-service` | `UserCreatedEvent` |
 
-Each service also declares a local topic bean pattern:
+## Transactional Outbox Pattern & Reliability
 
-```text
-fashionpin.<packagename>.events
-```
+To prevent database-Kafka dual-write failures, events are published using the **Transactional Outbox Pattern**:
 
-Example: `user-service` → `fashionpin.userservice.events`
+1. **DB Transaction**: Service writes entity state and event payload to `outbox_events` table within a single PostgreSQL transaction.
+2. **Outbox Relay**: Scheduled background worker (`OutboxPublisherScheduler`) polls pending outbox events every 2 seconds, publishes to Kafka via `KafkaProducerService`, and marks status as `PROCESSED`.
 
-When you add a real integration topic:
+## Consumer Idempotency Strategy
 
-1. Add constant to `KafkaTopics`
-2. Document it here
-3. Prefer Avro/JSON schema evolution strategy before wide production use
-4. Keep payload ownership with the producing bounded context
+Consumers enforce strict idempotency to handle potential duplicate Kafka deliveries:
 
-## Event base types
+1. **Idempotency Check**: Consumers check `processed_events` table by `eventId` before processing.
+2. **Duplicate Handling**: If `eventId` exists, processing is skipped with an info log.
+3. **Atomic Execution**: Entity creation and `processed_events` record creation occur within the consumer's DB transaction.
+
+## Event Base Types
 
 In `common-lib`:
-
 - `BaseEvent` — `eventId`, `eventType`, `occurredAt`, `correlationId`, `source`
-- `DomainEvent` — adds `aggregateId`, `aggregateType`, `payload`
+- `UserRegisteredEvent` — `eventId`, `eventType`, `timestamp`, `correlationId`, `userId`, `email`
+- `UserCreatedEvent` — `eventId`, `eventType`, `timestamp`, `correlationId`, `userId`, `email`
 
-Service-local example: `SampleDomainEvent` (placeholder only).
+## Remaining TODOs (Future Event Domains)
 
-## Producer usage
-
-`KafkaProducerService.publish(topic, key, payload)`:
-
-- Uses `ObjectProvider<KafkaTemplate<...>>` so missing Kafka beans in `dev` do not crash injection
-- Logs and no-ops if template unavailable
-
-## Consumer rules (for future implementers)
-
-- Consumer group id defaults to the service name
-- Trust packages: `com.fashionpin.*`
-- Always propagate / log `correlationId`
-- Prefer idempotent handlers
-- Do not block request threads on publish; use transactional outbox when consistency matters (not implemented yet)
-
-## Local broker
-
-```bash
-docker compose up -d zookeeper kafka
-export SPRING_PROFILES_ACTIVE=docker
-# or run with prod/docker profile so Kafka configs activate
-```
-
-Compose advertises `kafka:9092` inside the network and `localhost:9092` for host clients (`PLAINTEXT_HOST`).
+1. **Phase 2 (Product & Fashion Discovery)**:
+   - `fashionpin.product.created.v1`
+   - `fashionpin.fashion.pin.created.v1`
+2. **Phase 3 (Social & Moodboards)**:
+   - `fashionpin.user.followed.v1`
+   - `fashionpin.moodboard.created.v1`
+3. **Phase 4 (AI & Search Indexing)**:
+   - `fashionpin.image.processed.v1`
+   - `fashionpin.search.index.updated.v1`
+4. **Phase 5 (Commerce & Orders)**:
+   - `fashionpin.order.created.v1`
+   - `fashionpin.payment.processed.v1`

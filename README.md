@@ -205,13 +205,31 @@ GET /user-service/api/v1/health
 - Shared error model in `common-lib`
 - Service-owned databases only
 
-## Next implementation phases
+## Implementation Phases & Roadmap
 
-1. Auth token issuance and JWT validation
-2. Domain APIs per bounded context
-3. Real gRPC stub generation in CI
-4. Outbox/event schemas for domain events
-5. AI service integrations behind hexagonal ports
+- [x] **Phase 1: Identity & User Domain (Completed)**
+  - Auth token issuance, password hashing, refresh token rotation & revocation (`auth-service`).
+  - Event-driven user creation & profile initialization (`user-service`, `profile-service`).
+  - Gateway routes & JWT security foundation (`api-gateway`).
+  - Transactional Outbox pattern & consumer idempotency.
+
+- [ ] **Phase 2: Product & Fashion Discovery Domain (Remaining TODO)**
+  - Product catalog, inventory check, taxonomy & category APIs (`product-service`).
+  - Trending fashion pins & discovery feed (`fashion-discovery-service`).
+
+- [ ] **Phase 3: Moodboards & Social Graph Domain (Remaining TODO)**
+  - User follow/following graph & social interactions (`profile-service`).
+  - Curation moodboards, saved pins, and collections (`moodboard-service`).
+
+- [ ] **Phase 4: AI & Computer Vision Domain (Remaining TODO)**
+  - Visual search & image processing pipeline (`visual-search-service`, `image-processing-service`).
+  - AI stylist recommendation engine (`ai-stylist-service`).
+  - Virtual try-on engine (`virtual-tryon-service`).
+
+- [ ] **Phase 5: Commerce, Orders & Payments (Remaining TODO)**
+  - Shopping cart & bag (`shopping-service`).
+  - Order checkout & processing (`order-service`).
+  - Payment gateway integration (`payment-service`).
 
 ## License
 
