@@ -1,8 +1,22 @@
 server:
-  port: 8084
+  port: 8086
+
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/fashion_discovery_db
-    username: fashionpin
-    password: fashionpin
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/fashion_discovery_db}
+    username: ${DB_USERNAME:fashionpin}
+    password: ${DB_PASSWORD:fashionpin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://discovery-service:8761/eureka/}
