@@ -35,10 +35,7 @@ spring:
       - id: fashion-discovery-service
         uri: lb://fashion-discovery-service
         predicates:
-          - Path=/api/v1/fashion-discovery/**
-        filters:
-          - RewritePath=/api/v1/fashion-discovery(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/fashion/**, /api/v1/fashion-discovery/**
 
       - id: product-service
         uri: lb://product-service
@@ -64,10 +61,7 @@ spring:
       - id: outfit-detection-service
         uri: lb://outfit-detection-service
         predicates:
-          - Path=/api/v1/outfit-detection/**
-        filters:
-          - RewritePath=/api/v1/outfit-detection(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/outfit-detection/**, /api/v1/outfit-detection/**
 
       - id: image-processing-service
         uri: lb://image-processing-service
