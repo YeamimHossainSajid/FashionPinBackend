@@ -1,8 +1,36 @@
 server:
-  port: 8090
+  port: 8089
+
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/visual_search_db
-    username: fashionpin
-    password: fashionpin
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/visual_search_db}
+    username: ${DB_USERNAME:fashionpin}
+    password: ${DB_PASSWORD:fashionpin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}
+    consumer:
+      group-id: visual-search-service-group
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://discovery-service:8761/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://zipkin:9411/api/v2/spans}

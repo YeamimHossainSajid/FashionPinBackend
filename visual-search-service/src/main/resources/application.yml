@@ -28,7 +28,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
-      group-id: visual-search-service
+      group-id: visual-search-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -43,7 +43,7 @@ spring:
       fail-fast: false
 
 server:
-  port: 8090
+  port: 8089
 
 eureka:
   client:
@@ -83,7 +83,7 @@ springdoc:
 
 grpc:
   server:
-    port: ${GRPC_PORT:9090}
+    port: ${GRPC_PORT:9089}
   client:
     globally:
       negotiation-type: plaintext

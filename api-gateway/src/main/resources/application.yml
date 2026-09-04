@@ -45,7 +45,7 @@ spring:
       - id: search-service
         uri: lb://search-service
         predicates:
-          - Path=/api/v1/search/**
+          - Path=/api/search/**, /api/v1/search/**
         filters:
           - RewritePath=/api/v1/search(?<segment>/?.*), /api/v1${segment}
           # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
@@ -74,7 +74,7 @@ spring:
       - id: visual-search-service
         uri: lb://visual-search-service
         predicates:
-          - Path=/api/v1/visual-search/**
+          - Path=/api/visual-search/**, /api/v1/visual-search/**
         filters:
           - RewritePath=/api/v1/visual-search(?<segment>/?.*), /api/v1${segment}
           # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
