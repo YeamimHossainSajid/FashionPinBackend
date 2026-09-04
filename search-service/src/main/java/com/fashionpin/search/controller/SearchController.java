@@ -4,6 +4,7 @@ import com.fashionpin.search.dto.FashionPostSearchQueryCriteria;
 import com.fashionpin.search.dto.FashionPostSearchResponse;
 import com.fashionpin.search.dto.ProductSearchQueryCriteria;
 import com.fashionpin.search.dto.ProductSearchResponse;
+import com.fashionpin.search.dto.SearchFacetResultDto;
 import com.fashionpin.search.dto.SearchSortBy;
 import com.fashionpin.search.dto.SearchSuggestionResponse;
 import com.fashionpin.search.service.SearchCatalogService;
@@ -105,6 +106,44 @@ public class SearchController {
         }
 
         SearchSuggestionResponse response = searchCatalogService.getSuggestions(query, limit);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/facets")
+    public ResponseEntity<SearchFacetResultDto> getFacets(
+            @RequestParam(name = "q", required = false) String query,
+            @RequestParam(required = false) UUID brandId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String subcategory,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) String size,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Boolean inStock) {
+
+        if (minPrice != null && minPrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("minPrice must not be negative");
+        }
+        if (maxPrice != null && maxPrice.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("maxPrice must not be negative");
+        }
+        if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
+            throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
+        }
+
+        ProductSearchQueryCriteria criteria = ProductSearchQueryCriteria.builder()
+                .query(query)
+                .brandId(brandId)
+                .category(category)
+                .subcategory(subcategory)
+                .color(color)
+                .size(size)
+                .minPrice(minPrice)
+                .maxPrice(maxPrice)
+                .inStock(inStock)
+                .build();
+
+        SearchFacetResultDto response = searchCatalogService.computeFacets(criteria);
         return ResponseEntity.ok(response);
     }
 
