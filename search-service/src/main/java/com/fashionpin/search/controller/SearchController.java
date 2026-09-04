@@ -1,5 +1,7 @@
 package com.fashionpin.search.controller;
 
+import com.fashionpin.search.dto.FashionPostSearchQueryCriteria;
+import com.fashionpin.search.dto.FashionPostSearchResponse;
 import com.fashionpin.search.dto.ProductSearchQueryCriteria;
 import com.fashionpin.search.dto.ProductSearchResponse;
 import com.fashionpin.search.dto.SearchSortBy;
@@ -55,6 +57,37 @@ public class SearchController {
                 .build();
 
         ProductSearchResponse response = searchCatalogService.searchProducts(criteria);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<FashionPostSearchResponse> searchPosts(
+            @RequestParam(name = "q", required = false) String query,
+            @RequestParam(required = false) String style,
+            @RequestParam(required = false) String occasion,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) UUID authorUserId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize) {
+
+        if (page < 0) {
+            throw new IllegalArgumentException("page must not be negative");
+        }
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("pageSize must be greater than 0");
+        }
+
+        FashionPostSearchQueryCriteria criteria = FashionPostSearchQueryCriteria.builder()
+                .query(query)
+                .style(style)
+                .occasion(occasion)
+                .tag(tag)
+                .authorUserId(authorUserId)
+                .page(page)
+                .pageSize(pageSize)
+                .build();
+
+        FashionPostSearchResponse response = searchCatalogService.searchPosts(criteria);
         return ResponseEntity.ok(response);
     }
 
