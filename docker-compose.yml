@@ -296,8 +296,8 @@ services:
       dockerfile: search-service/Dockerfile
     container_name: fashionpin-search-service
     ports:
-      - "8086:8086"
-      - "9086:9086"
+      - "8088:8088"
+      - "9088:9088"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
@@ -310,7 +310,7 @@ services:
       REDIS_PORT: 6379
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
-      GRPC_PORT: "9086"
+      GRPC_PORT: "9088"
     depends_on:
       - discovery-service
       - config-server
@@ -416,8 +416,8 @@ services:
       dockerfile: visual-search-service/Dockerfile
     container_name: fashionpin-visual-search-service
     ports:
-      - "8090:8090"
-      - "9090:9090"
+      - "8089:8089"
+      - "9089:9089"
     environment:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_SERVER_URL: http://discovery-service:8761/eureka/
@@ -430,7 +430,7 @@ services:
       REDIS_PORT: 6379
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
-      GRPC_PORT: "9090"
+      GRPC_PORT: "9089"
     depends_on:
       - discovery-service
       - config-server
