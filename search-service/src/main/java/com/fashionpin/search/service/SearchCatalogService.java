@@ -9,6 +9,7 @@ import com.fashionpin.search.dto.ProductSearchIndexDto;
 import com.fashionpin.search.dto.ProductSearchQueryCriteria;
 import com.fashionpin.search.dto.ProductSearchResponse;
 import com.fashionpin.search.dto.SearchFacetResultDto;
+import com.fashionpin.search.dto.SearchSuggestionResponse;
 import com.fashionpin.search.repository.FashionPostSearchIndexRepository;
 import com.fashionpin.search.repository.ProductSearchIndexRepository;
 import com.fashionpin.search.service.specification.FashionPostSearchSpecifications;
@@ -21,9 +22,13 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -111,6 +116,7 @@ public class SearchCatalogService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         Specification<ProductSearchIndex> spec = ProductSearchSpecifications.build(baseFilter);
 
+        // 1. Brands with counts
         Map<String, Long> brands = new LinkedHashMap<>();
         CriteriaQuery<Object[]> brandCq = cb.createQuery(Object[].class);
         Root<ProductSearchIndex> brandRoot = brandCq.from(ProductSearchIndex.class);
@@ -127,6 +133,7 @@ public class SearchCatalogService {
             }
         }
 
+        // 2. Categories with counts
         Map<String, Long> categories = new LinkedHashMap<>();
         CriteriaQuery<Object[]> catCq = cb.createQuery(Object[].class);
         Root<ProductSearchIndex> catRoot = catCq.from(ProductSearchIndex.class);
@@ -143,6 +150,7 @@ public class SearchCatalogService {
             }
         }
 
+        // 3. Min/Max price bounds
         BigDecimal minPrice = null;
         BigDecimal maxPrice = null;
         CriteriaQuery<Object[]> priceCq = cb.createQuery(Object[].class);
@@ -163,6 +171,7 @@ public class SearchCatalogService {
             }
         }
 
+        // 4. Colors and sizes distributions
         Map<String, Long> colors = new LinkedHashMap<>();
         Map<String, Long> sizes = new LinkedHashMap<>();
         CriteriaQuery<Tuple> colorSizeCq = cb.createTupleQuery();
@@ -201,6 +210,50 @@ public class SearchCatalogService {
                 .sizes(sizes)
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
+                .build();
+    }
+
+    public SearchSuggestionResponse getSuggestions(String prefix, int limit) {
+        if (!StringUtils.hasText(prefix) || prefix.trim().length() < 2) {
+            return SearchSuggestionResponse.builder()
+                    .suggestions(Collections.emptyList())
+                    .categories(Collections.emptyList())
+                    .tags(Collections.emptyList())
+                    .build();
+        }
+
+        int effectiveLimit = limit <= 0 ? 10 : Math.min(limit, 50);
+        Pageable pageable = PageRequest.of(0, effectiveLimit);
+        String cleanPrefix = prefix.trim();
+
+        List<String> titles = productRepository.findDistinctTitlesByPrefix(cleanPrefix, pageable);
+        List<String> categories = productRepository.findDistinctCategoriesByPrefix(cleanPrefix, pageable);
+
+        List<List<String>> tagLists = productRepository.findAllProductTags(PageRequest.of(0, 100));
+        String lowerPrefix = cleanPrefix.toLowerCase();
+        Set<String> matchedTags = new LinkedHashSet<>();
+        if (tagLists != null) {
+            for (List<String> tagList : tagLists) {
+                if (tagList != null) {
+                    for (String tag : tagList) {
+                        if (tag != null && tag.toLowerCase().contains(lowerPrefix)) {
+                            matchedTags.add(tag);
+                            if (matchedTags.size() >= effectiveLimit) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (matchedTags.size() >= effectiveLimit) {
+                    break;
+                }
+            }
+        }
+
+        return SearchSuggestionResponse.builder()
+                .suggestions(titles)
+                .categories(categories)
+                .tags(new ArrayList<>(matchedTags))
                 .build();
     }
 }
