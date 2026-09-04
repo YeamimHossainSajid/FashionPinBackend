@@ -5,6 +5,7 @@ import com.fashionpin.search.dto.FashionPostSearchResponse;
 import com.fashionpin.search.dto.ProductSearchQueryCriteria;
 import com.fashionpin.search.dto.ProductSearchResponse;
 import com.fashionpin.search.dto.SearchSortBy;
+import com.fashionpin.search.dto.SearchSuggestionResponse;
 import com.fashionpin.search.service.SearchCatalogService;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -88,6 +89,22 @@ public class SearchController {
                 .build();
 
         FashionPostSearchResponse response = searchCatalogService.searchPosts(criteria);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/suggestions")
+    public ResponseEntity<SearchSuggestionResponse> getSuggestions(
+            @RequestParam(name = "q") String query,
+            @RequestParam(defaultValue = "10") int limit) {
+
+        if (query == null || query.trim().length() < 2) {
+            throw new IllegalArgumentException("Query parameter 'q' must contain at least 2 characters");
+        }
+        if (limit <= 0) {
+            throw new IllegalArgumentException("limit must be greater than 0");
+        }
+
+        SearchSuggestionResponse response = searchCatalogService.getSuggestions(query, limit);
         return ResponseEntity.ok(response);
     }
 
