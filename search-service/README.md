@@ -1,15 +1,22 @@
 # search-service
 
-Foundation module for search-service. Owns database `search_db` and exposes health endpoints only.
+Microservice for product and fashion post search indexing, facet aggregations, and search query execution. Owns database `search_db`.
+
+## Features (Part 2)
+
+- JPA Domain Models: `ProductSearchIndex` and `FashionPostSearchIndex`
+- Repositories: `ProductSearchIndexRepository` and `FashionPostSearchIndexRepository` with `JpaSpecificationExecutor`
+- Real-time Index Synchronization: `ProductIndexSyncService` and `FashionPostIndexSyncService` with out-of-order Kafka message filtering
+- Kafka Listeners: `ProductSearchEventListener` and `FashionPostSearchEventListener`
 
 ## Port
 
-`8086`
+`8088` (gRPC: `9088`)
 
 ## Health
 
-- Actuator: `http://localhost:8086/actuator/health`
-- API health: `http://localhost:8086/api/v1/health`
+- Actuator: `http://localhost:8088/actuator/health`
+- API health: `http://localhost:8088/api/v1/health`
 
 ## Local run
 
@@ -22,5 +29,3 @@ mvn -pl search-service spring-boot:run
 ```bash
 docker compose up search-service
 ```
-
-This module contains foundation placeholders only. Business features are intentionally not implemented.
