@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: order-service
   profiles:
@@ -142,6 +144,16 @@ spring:
     listener:
       auto-startup: false
 
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+grpc:
+  server:
+    port: 0
+
 ---
 spring:
   config:
@@ -165,4 +177,3 @@ spring:
   kafka:
     listener:
       auto-startup: true
-
