@@ -2,12 +2,16 @@ package com.fashionpin.productservice.controller;
 
 import com.fashionpin.common.dto.ApiResponse;
 import com.fashionpin.productservice.dto.CreateProductRequest;
+import com.fashionpin.productservice.dto.CreateProductVariantRequest;
 import com.fashionpin.productservice.dto.ProductResponse;
+import com.fashionpin.productservice.dto.ProductVariantDto;
 import com.fashionpin.productservice.dto.UpdateProductRequest;
 import com.fashionpin.productservice.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,16 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
-@Tag(name = "Products", description = "Product catalog management endpoints")
+@RequiredArgsConstructor
+@Tag(name = "Products", description = "Product catalog and variant management endpoints")
 public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @PostMapping({"/api/products", "/api/v1/product"})
+    @PostMapping({"/api/products", "/api/v1/product", "/api/admin/products"})
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create catalog product (Admin only)")
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody CreateProductRequest request) {
@@ -45,10 +46,15 @@ public class ProductController {
                 .body(ApiResponse.ok("Product created successfully", response));
     }
 
-    @GetMapping({"/api/products/{id}", "/api/v1/product/{id}"})
-    @Operation(summary = "Get product by ID")
-    public ResponseEntity<ApiResponse<ProductResponse>> getProductById(@PathVariable("id") String id) {
-        ProductResponse response = productService.getProductById(id);
+    @GetMapping({"/api/products/{idOrSlug}", "/api/v1/product/{idOrSlug}"})
+    @Operation(summary = "Get product by ID or slug (PDP)")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProductByIdOrSlug(@PathVariable("idOrSlug") String idOrSlug) {
+        ProductResponse response;
+        try {
+            response = productService.getProductById(idOrSlug);
+        } catch (Exception e) {
+            response = productService.getProductBySlug(idOrSlug);
+        }
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
@@ -56,6 +62,8 @@ public class ProductController {
     @Operation(summary = "Get paginated & filtered products catalog")
     public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProducts(
             @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "subcategory", required = false) String subcategory,
+            @RequestParam(name = "collection", required = false) String collection,
             @RequestParam(name = "brandId", required = false) String brandId,
             @RequestParam(name = "productType", required = false) String productType,
             @RequestParam(name = "status", required = false) String status,
@@ -69,12 +77,28 @@ public class ProductController {
                 ? Sort.Direction.ASC : Sort.Direction.DESC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortProperty));
-        Page<ProductResponse> response = productService.getProducts(category, brandId, productType, status, pageable);
+        Page<ProductResponse> response = productService.getProducts(category, subcategory, collection, brandId, productType, status, pageable);
 
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    @PatchMapping({"/api/products/{id}", "/api/v1/product/{id}"})
+    @PostMapping({"/api/admin/products/{id}/variants", "/api/products/{id}/variants"})
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create product SKU variant (Admin only)")
+    public ResponseEntity<ApiResponse<ProductVariantDto>> createVariant(
+            @PathVariable("id") String id,
+            @Valid @RequestBody CreateProductVariantRequest request) {
+        ProductVariantDto response = productService.createVariant(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Variant created successfully", response));
+    }
+
+    @GetMapping({"/api/products/{id}/variants", "/api/v1/product/{id}/variants"})
+    @Operation(summary = "Get all variants for a product")
+    public ResponseEntity<ApiResponse<List<ProductVariantDto>>> getVariants(@PathVariable("id") String id) {
+        return ResponseEntity.ok(ApiResponse.ok(productService.getProductVariants(id)));
+    }
+
+    @PatchMapping({"/api/products/{id}", "/api/v1/product/{id}", "/api/admin/products/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update product details (Admin only)")
     public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
@@ -84,7 +108,7 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.ok("Product updated successfully", response));
     }
 
-    @DeleteMapping({"/api/products/{id}", "/api/v1/product/{id}"})
+    @DeleteMapping({"/api/products/{id}", "/api/v1/product/{id}", "/api/admin/products/{id}"})
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete product (Admin only)")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable("id") String id) {

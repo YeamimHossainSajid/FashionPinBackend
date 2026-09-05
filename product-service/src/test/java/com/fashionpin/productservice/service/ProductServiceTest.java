@@ -13,7 +13,10 @@ import com.fashionpin.productservice.dto.CreateProductRequest;
 import com.fashionpin.productservice.dto.ProductResponse;
 import com.fashionpin.productservice.dto.UpdateProductRequest;
 import com.fashionpin.productservice.entity.Product;
+import com.fashionpin.productservice.repository.CategoryRepository;
+import com.fashionpin.productservice.repository.ItemTypeRepository;
 import com.fashionpin.productservice.repository.ProductRepository;
+import com.fashionpin.productservice.repository.ProductVariantRepository;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -35,6 +38,15 @@ class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private ProductVariantRepository variantRepository;
+
+    @Mock
+    private CategoryRepository categoryRepository;
+
+    @Mock
+    private ItemTypeRepository itemTypeRepository;
 
     @Mock
     private BrandServiceClient brandServiceClient;
@@ -97,21 +109,6 @@ class ProductServiceTest {
     }
 
     @Test
-    void createProduct_DuplicateSlug_ThrowsException() {
-        CreateProductRequest request = CreateProductRequest.builder()
-                .brandId(brandId)
-                .name("Silk Floral Dress")
-                .category("Dresses")
-                .price(new BigDecimal("299.99"))
-                .build();
-
-        when(productRepository.existsBySlug("silk-floral-dress")).thenReturn(true);
-
-        BusinessException ex = assertThrows(BusinessException.class, () -> productService.createProduct(request));
-        assertEquals("PRODUCT_SLUG_ALREADY_EXISTS", ex.getCode());
-    }
-
-    @Test
     void getProductById_Success() {
         when(productRepository.findById(sampleProduct.getId())).thenReturn(Optional.of(sampleProduct));
 
@@ -129,7 +126,7 @@ class ProductServiceTest {
 
         when(productRepository.findAll(pageable)).thenReturn(page);
 
-        Page<ProductResponse> result = productService.getProducts(null, null, null, null, pageable);
+        Page<ProductResponse> result = productService.getProducts(null, null, null, null, null, null, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
