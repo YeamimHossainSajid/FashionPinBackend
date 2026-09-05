@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: shopping-service
   profiles:
@@ -141,6 +143,16 @@ spring:
   kafka:
     listener:
       auto-startup: false
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+grpc:
+  server:
+    port: 0
 
 ---
 spring:
