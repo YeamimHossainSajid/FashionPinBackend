@@ -16,6 +16,9 @@ public interface FashionPostRepository extends JpaRepository<FashionPost, String
 
     Page<FashionPost> findByAuthorUserId(String authorUserId, Pageable pageable);
 
+    @Query("SELECT DISTINCT p FROM FashionPost p JOIN p.outfit o JOIN o.items i WHERE i.productId = :productId AND p.visibility = 'PUBLIC'")
+    Page<FashionPost> findByProductId(@Param("productId") String productId, Pageable pageable);
+
     @Query("SELECT DISTINCT p FROM FashionPost p LEFT JOIN p.tags t " +
            "WHERE (:style IS NULL OR p.style = :style) " +
            "AND (:occasion IS NULL OR p.occasion = :occasion) " +

@@ -47,6 +47,13 @@ public class FashionPostController {
         return ResponseEntity.ok(postService.getPosts(pageable));
     }
 
+    @GetMapping("/by-product/{productId}")
+    public ResponseEntity<Page<FashionPostResponse>> getPostsByProductId(
+            @PathVariable("productId") String productId,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(postService.getPostsByProductId(productId, pageable));
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<FashionPostResponse> updatePost(
             @PathVariable("id") String id,

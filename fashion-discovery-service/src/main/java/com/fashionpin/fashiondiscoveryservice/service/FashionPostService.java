@@ -90,6 +90,11 @@ public class FashionPostService {
         return postRepository.findAll(pageable).map(this::mapToResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<FashionPostResponse> getPostsByProductId(String productId, Pageable pageable) {
+        return postRepository.findByProductId(productId, pageable).map(this::mapToResponse);
+    }
+
     @Transactional
     public FashionPostResponse updatePost(String id, String userId, UpdateFashionPostRequest request) {
         FashionPost post = postRepository.findById(id)
