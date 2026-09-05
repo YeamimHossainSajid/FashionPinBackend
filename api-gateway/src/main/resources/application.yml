@@ -40,7 +40,7 @@ spring:
       - id: product-service
         uri: lb://product-service
         predicates:
-          - Path=/api/products/**, /api/v1/product/**
+          - Path=/api/products/**, /api/v1/product/**, /api/categories/**, /api/v1/categories/**, /api/collections/**, /api/v1/collections/**, /api/storefront/**, /api/v1/storefront/**, /api/admin/**
 
       - id: search-service
         uri: lb://search-service
@@ -106,18 +106,12 @@ spring:
       - id: shopping-service
         uri: lb://shopping-service
         predicates:
-          - Path=/api/v1/shopping/**
-        filters:
-          - RewritePath=/api/v1/shopping(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/cart/**, /api/v1/shopping/**, /api/v1/cart/**
 
       - id: order-service
         uri: lb://order-service
         predicates:
-          - Path=/api/v1/order/**
-        filters:
-          - RewritePath=/api/v1/order(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/orders/**, /api/v1/order/**, /api/v1/orders/**
 
       - id: payment-service
         uri: lb://payment-service
