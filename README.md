@@ -134,7 +134,7 @@ erDiagram
     USER_PROFILES ||--o{ STYLE_DNA_AFFINITIES : "exhibits"
 
     USERS {
-        varchar(64) id PK
+        uuid id PK
         varchar(100) email UK
         varchar(100) username UK
         varchar(255) password_hash
@@ -145,8 +145,8 @@ erDiagram
     }
 
     USER_PROFILES {
-        varchar(64) id PK
-        varchar(64) user_id FK,UK
+        uuid id PK
+        uuid user_id FK,UK
         varchar(100) display_name
         text bio
         varchar(500) avatar_url
@@ -158,8 +158,8 @@ erDiagram
     }
 
     USER_FOLLOWS {
-        varchar(64) follower_id PK,FK
-        varchar(64) following_id PK,FK
+        uuid follower_id PK,FK
+        uuid following_id PK,FK
         timestamp created_at
     }
 
@@ -173,7 +173,7 @@ erDiagram
     COLLECTIONS ||--o{ COLLECTION_PRODUCTS : "features"
 
     BRANDS {
-        varchar(64) id PK
+        uuid id PK
         varchar(150) name
         varchar(150) slug UK
         text description
@@ -185,11 +185,11 @@ erDiagram
     }
 
     CATEGORIES {
-        varchar(64) id PK
+        uuid id PK
         varchar(100) name
         varchar(100) slug UK
         text description
-        varchar(64) parent_id FK
+        uuid parent_id FK
         int display_order
         boolean is_active
         varchar(500) banner_media_url
@@ -197,8 +197,8 @@ erDiagram
     }
 
     ITEM_TYPES {
-        varchar(64) id PK
-        varchar(64) category_id FK
+        uuid id PK
+        uuid category_id FK
         varchar(100) name
         varchar(100) slug
         text description
@@ -208,7 +208,7 @@ erDiagram
     }
 
     COLLECTIONS {
-        varchar(64) id PK
+        uuid id PK
         varchar(150) name
         varchar(150) slug UK
         varchar(255) tagline
@@ -222,10 +222,10 @@ erDiagram
     }
 
     PRODUCTS {
-        varchar(64) id PK
-        varchar(64) brand_id FK
-        varchar(64) category_id FK
-        varchar(64) item_type_id FK
+        uuid id PK
+        uuid brand_id FK
+        uuid category_id FK
+        uuid item_type_id FK
         varchar(255) name
         varchar(255) slug UK
         varchar(500) summary
@@ -242,8 +242,8 @@ erDiagram
     }
 
     PRODUCT_VARIANTS {
-        varchar(64) id PK
-        varchar(64) product_id FK
+        uuid id PK
+        uuid product_id FK
         varchar(100) sku UK
         varchar(64) color_name
         varchar(16) color_hex
@@ -255,8 +255,8 @@ erDiagram
     }
 
     COLLECTION_PRODUCTS {
-        varchar(64) collection_id PK,FK
-        varchar(64) product_id PK,FK
+        uuid collection_id PK,FK
+        uuid product_id PK,FK
         int display_order
         varchar(255) curator_note
         timestamp added_at
@@ -269,8 +269,8 @@ erDiagram
     PRODUCTS ||--o{ MOODBOARD_ITEMS : "pinned as"
 
     MOODBOARDS {
-        varchar(64) id PK
-        varchar(64) user_id FK
+        uuid id PK
+        uuid user_id FK
         varchar(150) title
         varchar(150) slug
         text description
@@ -283,9 +283,9 @@ erDiagram
     }
 
     MOODBOARD_ITEMS {
-        varchar(64) id PK
-        varchar(64) moodboard_id FK
-        varchar(64) product_id FK
+        uuid id PK
+        uuid moodboard_id FK
+        uuid product_id FK
         varchar(64) media_id
         decimal position_x
         decimal position_y
@@ -298,8 +298,8 @@ erDiagram
     }
 
     MOODBOARD_COLLABORATORS {
-        varchar(64) moodboard_id PK,FK
-        varchar(64) user_id PK,FK
+        uuid moodboard_id PK,FK
+        uuid user_id PK,FK
         varchar(32) permission_role
         timestamp joined_at
     }
@@ -313,26 +313,26 @@ erDiagram
     PRODUCT_VARIANTS ||--o{ INVENTORY_STOCKS : "tracked in"
 
     SHOPPING_CARTS {
-        varchar(64) id PK
-        varchar(64) user_id FK,UK
+        uuid id PK
+        uuid user_id FK,UK
         decimal total_amount
         varchar(3) currency
         timestamp updated_at
     }
 
     CART_ITEMS {
-        varchar(64) id PK
-        varchar(64) cart_id FK
-        varchar(64) product_id FK
-        varchar(64) variant_id FK
+        uuid id PK
+        uuid cart_id FK
+        uuid product_id FK
+        uuid variant_id FK
         int quantity
         decimal unit_price
         timestamp added_at
     }
 
     ORDERS {
-        varchar(64) id PK
-        varchar(64) user_id FK
+        uuid id PK
+        uuid user_id FK
         varchar(32) order_number UK
         varchar(32) order_status
         decimal subtotal_amount
@@ -340,16 +340,16 @@ erDiagram
         decimal shipping_amount
         decimal total_amount
         varchar(3) currency
-        varchar(64) shipping_address_id
+        uuid shipping_address_id
         timestamp placed_at
         timestamp updated_at
     }
 
     ORDER_ITEMS {
-        varchar(64) id PK
-        varchar(64) order_id FK
-        varchar(64) product_id FK
-        varchar(64) variant_id FK
+        uuid id PK
+        uuid order_id FK
+        uuid product_id FK
+        uuid variant_id FK
         varchar(100) sku
         varchar(255) product_name
         int quantity
@@ -358,8 +358,8 @@ erDiagram
     }
 
     PAYMENT_TRANSACTIONS {
-        varchar(64) id PK
-        varchar(64) order_id FK,UK
+        uuid id PK
+        uuid order_id FK,UK
         varchar(64) payment_method
         varchar(100) transaction_reference
         varchar(32) status
@@ -370,8 +370,8 @@ erDiagram
     }
 
     INVENTORY_STOCKS {
-        varchar(64) id PK
-        varchar(64) variant_id FK,UK
+        uuid id PK
+        uuid variant_id FK,UK
         int quantity_available
         int quantity_reserved
         int safety_threshold
@@ -383,8 +383,8 @@ erDiagram
     PRODUCTS ||--o{ VISUAL_EMBEDDINGS : "vectorized into"
 
     VISUAL_EMBEDDINGS {
-        varchar(64) id PK
-        varchar(64) product_id FK
+        uuid id PK
+        uuid product_id FK
         varchar(64) media_id
         varchar(64) model_version
         text embedding_vector
@@ -403,7 +403,7 @@ Manages authentication credentials, JWT token lifecycle, and role-based permissi
 #### `users` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | User UUID |
+| `id` | `UUID` | `PRIMARY KEY` | User UUID |
 | `email` | `VARCHAR(100)` | `NOT NULL, UNIQUE` | User email address |
 | `username` | `VARCHAR(100)` | `NOT NULL, UNIQUE` | Unique handle (e.g. `@elenavance`) |
 | `password_hash`| `VARCHAR(255)` | `NOT NULL` | BCrypt encrypted password hash |
@@ -415,8 +415,8 @@ Manages authentication credentials, JWT token lifecycle, and role-based permissi
 #### `refresh_tokens` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Token record UUID |
-| `user_id` | `VARCHAR(64)` | `NOT NULL, FK -> users(id)` | Associated user |
+| `id` | `UUID` | `PRIMARY KEY` | Token record UUID |
+| `user_id` | `UUID` | `NOT NULL, FK -> users(id)` | Associated user |
 | `token_hash` | `VARCHAR(255)` | `NOT NULL, UNIQUE` | Cryptographic SHA-256 token hash |
 | `expires_at` | `TIMESTAMP` | `NOT NULL` | Token expiry timestamp |
 | `is_revoked` | `BOOLEAN` | `DEFAULT FALSE` | Revocation status |
@@ -429,8 +429,8 @@ Manages creator profile metadata, style aesthetic affinities, and social followe
 #### `user_profiles` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Profile UUID |
-| `user_id` | `VARCHAR(64)` | `NOT NULL, UNIQUE` | Associated User ID |
+| `id` | `UUID` | `PRIMARY KEY` | Profile UUID |
+| `user_id` | `UUID` | `NOT NULL, UNIQUE` | Associated User ID |
 | `display_name` | `VARCHAR(100)` | `NOT NULL` | Public curator name |
 | `bio` | `TEXT` | `NULLABLE` | Editorial curator biography |
 | `avatar_url` | `VARCHAR(500)` | `NULLABLE` | Profile picture asset URL |
@@ -443,8 +443,8 @@ Manages creator profile metadata, style aesthetic affinities, and social followe
 #### `user_follows` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `follower_id` | `VARCHAR(64)` | `PRIMARY KEY` | User ID who follows |
-| `following_id`| `VARCHAR(64)` | `PRIMARY KEY` | User ID being followed |
+| `follower_id` | `UUID` | `PRIMARY KEY` | User ID who follows |
+| `following_id`| `UUID` | `PRIMARY KEY` | User ID being followed |
 | `created_at` | `TIMESTAMP` | `DEFAULT NOW()` | Timestamp follow initiated |
 
 ---
@@ -455,11 +455,11 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `categories` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Category ID (`cat_men`, `cat_women`, `cat_kids`) |
+| `id` | `UUID` | `PRIMARY KEY` | Category ID (`cat_men`, `cat_women`, `cat_kids`, UUID) |
 | `name` | `VARCHAR(100)` | `NOT NULL` | Demographics title (e.g. `Men's Fashion`) |
 | `slug` | `VARCHAR(100)` | `NOT NULL, UNIQUE` | Route URL slug (`men`, `women`, `kids`) |
 | `description` | `TEXT` | `NULLABLE` | Editorial category manifesto |
-| `parent_id` | `VARCHAR(64)` | `FK -> categories(id)` | Nested tree hierarchy parent |
+| `parent_id` | `UUID` | `FK -> categories(id)` | Nested tree hierarchy parent |
 | `display_order`| `INT` | `DEFAULT 0` | Navigation order |
 | `banner_media_url`| `VARCHAR(500)`| `NULLABLE` | 4K editorial banner visual |
 | `is_active` | `BOOLEAN` | `DEFAULT TRUE` | Activation toggle |
@@ -467,8 +467,8 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `item_types` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Silhouette ID (`it_m_pants`, `it_w_dresses`) |
-| `category_id` | `VARCHAR(64)` | `NOT NULL, FK -> categories(id)` | Parent category relation |
+| `id` | `UUID` | `PRIMARY KEY` | Silhouette ID (`it_m_pants`, `it_w_dresses`, UUID) |
+| `category_id` | `UUID` | `NOT NULL, FK -> categories(id)` | Parent category relation |
 | `name` | `VARCHAR(100)` | `NOT NULL` | Silhouette label (`Wide-Leg Trousers`) |
 | `slug` | `VARCHAR(100)` | `NOT NULL` | Subcategory filter key |
 | `display_order`| `INT` | `DEFAULT 0` | Display sorting priority |
@@ -477,7 +477,7 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `collections` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Collection ID (e.g. `col_old_money`) |
+| `id` | `UUID` | `PRIMARY KEY` | Collection ID (e.g. `col_old_money`, UUID) |
 | `name` | `VARCHAR(150)` | `NOT NULL` | Collection name (*Old Money, Minimal Luxe, Street Couture, Quiet Luxury, Dark Academia, Coastal Chic*) |
 | `slug` | `VARCHAR(150)` | `NOT NULL, UNIQUE` | Aesthetic URL route slug |
 | `tagline` | `VARCHAR(255)` | `NULLABLE` | Short editorial summary tagline |
@@ -489,10 +489,10 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `products` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Product ID (`mp-1`, `wp-1`, UUID) |
-| `brand_id` | `VARCHAR(64)` | `NOT NULL` | Designer atelier / brand reference |
-| `category_id` | `VARCHAR(64)` | `FK -> categories(id)` | Category relation |
-| `item_type_id`| `VARCHAR(64)` | `FK -> item_types(id)` | Silhouette relation |
+| `id` | `UUID` | `PRIMARY KEY` | Product ID (`mp-1`, `wp-1`, UUID) |
+| `brand_id` | `UUID` | `NOT NULL` | Designer atelier / brand reference |
+| `category_id` | `UUID` | `FK -> categories(id)` | Category relation |
+| `item_type_id`| `UUID` | `FK -> item_types(id)` | Silhouette relation |
 | `name` | `VARCHAR(255)` | `NOT NULL` | Product title |
 | `slug` | `VARCHAR(255)` | `NOT NULL, UNIQUE` | PDP URL slug |
 | `summary` | `VARCHAR(500)` | `NULLABLE` | Short card summary |
@@ -510,8 +510,8 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `product_variants` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Unique variant UUID |
-| `product_id` | `VARCHAR(64)` | `NOT NULL, FK -> products(id)` | Parent product link |
+| `id` | `UUID` | `PRIMARY KEY` | Unique variant UUID |
+| `product_id` | `UUID` | `NOT NULL, FK -> products(id)` | Parent product link |
 | `sku` | `VARCHAR(100)` | `NOT NULL, UNIQUE` | Stock Keeping Unit identifier |
 | `color_name` | `VARCHAR(64)` | `NOT NULL` | Color name (e.g. `Oatmeal Beige`) |
 | `color_hex` | `VARCHAR(16)` | `DEFAULT '#222222'` | Swatch color hex code |
@@ -523,8 +523,8 @@ Core catalog database powering demographic categories, silhouette item types, ae
 #### `collection_products` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `collection_id`| `VARCHAR(64)` | `PRIMARY KEY, FK -> collections(id)` | Collection FK |
-| `product_id` | `VARCHAR(64)` | `PRIMARY KEY, FK -> products(id)` | Product FK |
+| `collection_id`| `UUID` | `PRIMARY KEY, FK -> collections(id)` | Collection FK |
+| `product_id` | `UUID` | `PRIMARY KEY, FK -> products(id)` | Product FK |
 | `display_order`| `INT` | `DEFAULT 0` | Sequence inside collection |
 | `curator_note` | `VARCHAR(255)`| `NULLABLE` | Stylist commentary |
 
@@ -536,8 +536,8 @@ Powers interactive 2D visual moodboards, draggable sticker canvas layers, and co
 #### `moodboards` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Moodboard UUID |
-| `user_id` | `VARCHAR(64)` | `NOT NULL` | Owner User ID |
+| `id` | `UUID` | `PRIMARY KEY` | Moodboard UUID |
+| `user_id` | `UUID` | `NOT NULL` | Owner User ID |
 | `title` | `VARCHAR(150)` | `NOT NULL` | Moodboard title (e.g. *Parisian Autumn Tailoring*) |
 | `slug` | `VARCHAR(150)` | `NOT NULL` | Public URL slug |
 | `description` | `TEXT` | `NULLABLE` | Aesthetic description & notes |
@@ -549,10 +549,10 @@ Powers interactive 2D visual moodboards, draggable sticker canvas layers, and co
 #### `moodboard_items` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Item UUID on canvas |
-| `moodboard_id`| `VARCHAR(64)` | `NOT NULL, FK -> moodboards(id)` | Parent moodboard |
-| `product_id` | `VARCHAR(64)` | `NULLABLE` | Linked product garment |
-| `media_id` | `VARCHAR(64)` | `NULLABLE` | Custom user image asset reference |
+| `id` | `UUID` | `PRIMARY KEY` | Item UUID on canvas |
+| `moodboard_id`| `UUID` | `NOT NULL, FK -> moodboards(id)` | Parent moodboard |
+| `product_id` | `UUID` | `NULLABLE` | Linked product garment |
+| `media_id` | `UUID` | `NULLABLE` | Custom user image asset reference |
 | `position_x` | `DECIMAL(8,2)` | `NOT NULL` | X-coordinate on infinite canvas |
 | `position_y` | `DECIMAL(8,2)` | `NOT NULL` | Y-coordinate on infinite canvas |
 | `width` | `DECIMAL(8,2)` | `NOT NULL` | Element rendered width |
@@ -569,8 +569,8 @@ Manages active customer cart sessions, selected variants, and item quantities.
 #### `shopping_carts` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Shopping Cart UUID |
-| `user_id` | `VARCHAR(64)` | `NOT NULL, UNIQUE` | Customer ID |
+| `id` | `UUID` | `PRIMARY KEY` | Shopping Cart UUID |
+| `user_id` | `UUID` | `NOT NULL, UNIQUE` | Customer ID |
 | `total_amount` | `DECIMAL(12,2)`| `DEFAULT 0.00` | Current cart value |
 | `currency` | `VARCHAR(3)` | `DEFAULT 'USD'` | Currency code |
 | `updated_at` | `TIMESTAMP` | `NOT NULL` | Last activity timestamp |
@@ -578,10 +578,10 @@ Manages active customer cart sessions, selected variants, and item quantities.
 #### `cart_items` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Cart item UUID |
-| `cart_id` | `VARCHAR(64)` | `NOT NULL, FK -> shopping_carts(id)` | Parent cart reference |
-| `product_id` | `VARCHAR(64)` | `NOT NULL` | Product reference |
-| `variant_id` | `VARCHAR(64)` | `NOT NULL` | SKU variant reference |
+| `id` | `UUID` | `PRIMARY KEY` | Cart item UUID |
+| `cart_id` | `UUID` | `NOT NULL, FK -> shopping_carts(id)` | Parent cart reference |
+| `product_id` | `UUID` | `NOT NULL` | Product reference |
+| `variant_id` | `UUID` | `NOT NULL` | SKU variant reference |
 | `quantity` | `INT` | `NOT NULL, CHECK (quantity > 0)` | Selected quantity |
 | `unit_price` | `DECIMAL(12,2)`| `NOT NULL` | Snapshot unit price |
 
@@ -593,8 +593,8 @@ Fulfillment state machine tracking checkouts, tax, shipments, and customer order
 #### `orders` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Order UUID |
-| `user_id` | `VARCHAR(64)` | `NOT NULL` | Customer ID |
+| `id` | `UUID` | `PRIMARY KEY` | Order UUID |
+| `user_id` | `UUID` | `NOT NULL` | Customer ID |
 | `order_number` | `VARCHAR(32)` | `NOT NULL, UNIQUE` | Human-readable order code (e.g. `FP-2026-9812`) |
 | `order_status` | `VARCHAR(32)` | `NOT NULL` | `PENDING`, `PAID`, `FULFILLING`, `SHIPPED`, `DELIVERED`, `CANCELLED` |
 | `subtotal_amount`| `DECIMAL(12,2)`| `NOT NULL` | Line item subtotal |
@@ -607,10 +607,10 @@ Fulfillment state machine tracking checkouts, tax, shipments, and customer order
 #### `order_items` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Order line UUID |
-| `order_id` | `VARCHAR(64)` | `NOT NULL, FK -> orders(id)` | Order parent relation |
-| `product_id` | `VARCHAR(64)` | `NOT NULL` | Product ID |
-| `variant_id` | `VARCHAR(64)` | `NOT NULL` | Variant SKU ID |
+| `id` | `UUID` | `PRIMARY KEY` | Order line UUID |
+| `order_id` | `UUID` | `NOT NULL, FK -> orders(id)` | Order parent relation |
+| `product_id` | `UUID` | `NOT NULL` | Product ID |
+| `variant_id` | `UUID` | `NOT NULL` | Variant SKU ID |
 | `sku` | `VARCHAR(100)` | `NOT NULL` | SKU code |
 | `product_name` | `VARCHAR(255)` | `NOT NULL` | Snapshot product name |
 | `quantity` | `INT` | `NOT NULL` | Purchased units |
@@ -625,8 +625,8 @@ Secure payment gateway ledger managing transactions, idempotency keys, and refun
 #### `payment_transactions` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Transaction UUID |
-| `order_id` | `VARCHAR(64)` | `NOT NULL, UNIQUE` | Linked order ID |
+| `id` | `UUID` | `PRIMARY KEY` | Transaction UUID |
+| `order_id` | `UUID` | `NOT NULL, UNIQUE` | Linked order ID |
 | `payment_method`| `VARCHAR(64)` | `NOT NULL` | `STRIPE_CREDIT_CARD`, `APPLE_PAY`, `KLARNA` |
 | `transaction_reference`| `VARCHAR(100)`| `NOT NULL, UNIQUE` | Gateway transaction ID (e.g. `ch_3M...`) |
 | `status` | `VARCHAR(32)` | `NOT NULL` | `SUCCEEDED`, `PENDING`, `FAILED`, `REFUNDED` |
@@ -642,8 +642,8 @@ Real-time inventory levels, safety thresholds, and distributed checkout reservat
 #### `inventory_stocks` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Stock record UUID |
-| `variant_id` | `VARCHAR(64)` | `NOT NULL, UNIQUE` | Linked Product Variant SKU |
+| `id` | `UUID` | `PRIMARY KEY` | Stock record UUID |
+| `variant_id` | `UUID` | `NOT NULL, UNIQUE` | Linked Product Variant SKU |
 | `quantity_available`| `INT` | `NOT NULL, DEFAULT 0` | Unreserved stock on hand |
 | `quantity_reserved`| `INT` | `NOT NULL, DEFAULT 0` | Stock locked during active checkouts |
 | `safety_threshold`| `INT` | `DEFAULT 5` | Low stock alert trigger level |
@@ -658,9 +658,9 @@ Vector embeddings, garment feature vectors, and chromatic profiles powering visu
 #### `visual_embeddings` Table
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | `VARCHAR(64)` | `PRIMARY KEY` | Vector record UUID |
-| `product_id` | `VARCHAR(64)` | `NOT NULL` | Linked catalog product |
-| `media_id` | `VARCHAR(64)` | `NOT NULL` | Visual image reference |
+| `id` | `UUID` | `PRIMARY KEY` | Vector record UUID |
+| `product_id` | `UUID` | `NOT NULL` | Linked catalog product |
+| `media_id` | `UUID` | `NOT NULL` | Visual image reference |
 | `model_version`| `VARCHAR(64)` | `NOT NULL` | Vision encoder model version (e.g. `ViT-L/14`) |
 | `embedding_vector`| `TEXT` | `NOT NULL` | 512-dim / 768-dim float array vector |
 | `dominant_color`| `VARCHAR(64)` | `NULLABLE` | Primary chromatic centroid |
