@@ -5,18 +5,30 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/product_db}
-    username: ${DB_USERNAME:fashionpin}
-    password: ${DB_PASSWORD:fashionpin}
+    url: ${DB_URL:jdbc:postgresql://dpg-daa26l6gekts738rgd40-a.oregon-postgres.render.com/hackathon_i4uj?sslmode=require}
+    username: ${DB_USERNAME:hackathon_i4uj_user}
+    password: ${DB_PASSWORD:hi0QuGM52BBPQSnt6PbuayW4gPssqRgn}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      minimum-idle: 2
+      maximum-pool-size: 10
+      idle-timeout: 30000
+      max-lifetime: 120000
+      keepalive-time: 30000
+      connection-test-query: SELECT 1
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
   sql:
     init:
       mode: never
@@ -49,8 +61,8 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     registry-fetch-interval-seconds: 5
   instance:
     prefer-ip-address: true
@@ -98,22 +110,19 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:h2:mem:product_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: ${DB_URL:jdbc:postgresql://dpg-daa26l6gekts738rgd40-a.oregon-postgres.render.com/hackathon_i4uj?sslmode=require}
+    username: ${DB_USERNAME:hackathon_i4uj_user}
+    password: ${DB_PASSWORD:hi0QuGM52BBPQSnt6PbuayW4gPssqRgn}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-  h2:
-    console:
-      enabled: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     admin:
-      auto-create: true
+      auto-create: false
     listener:
       auto-startup: false
   autoconfigure:
