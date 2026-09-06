@@ -16,4 +16,5 @@ public class ProductServiceApplication {
         SpringApplication.run(ProductServiceApplication.class, args);
     }
 }
+//JAVA_HOME=/opt/homebrew/opt/openjdk@21 ./mvnw spring-boot:run -pl product-service
 
