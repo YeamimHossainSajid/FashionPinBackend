@@ -77,6 +77,9 @@ public class ItemType {
 
     @PreUpdate
     protected void onUpdate() {
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
         updatedAt = Instant.now();
     }
 }

@@ -126,13 +126,19 @@ public class Product {
             status = "ACTIVE";
         }
         Instant now = Instant.now();
-        createdAt = now;
+        if (createdAt == null) {
+            createdAt = now;
+        }
         updatedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = Instant.now();
+        Instant now = Instant.now();
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        updatedAt = now;
     }
 
     public void addVariant(ProductVariant variant) {
