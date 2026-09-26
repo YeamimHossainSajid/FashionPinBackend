@@ -740,6 +740,51 @@ services:
     networks:
       - fashionpin-net
 
+  minio:
+    image: minio/minio:latest
+    container_name: fashionpin-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: FashionPinS3SecureKey2026!
+    volumes:
+      - minio_data:/data
+    networks:
+      - fashionpin-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: fashionpin-minio-init
+    depends_on:
+      minio:
+        condition: service_started
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin FashionPinS3SecureKey2026!;
+      /usr/bin/mc mb myminio/fashionpin-media --ignore-existing;
+      /usr/bin/mc mb myminio/fashionpin-products --ignore-existing;
+      /usr/bin/mc mb myminio/fashionpin-pins --ignore-existing;
+      /usr/bin/mc mb myminio/fashionpin-avatars --ignore-existing;
+      /usr/bin/mc mb myminio/fashionpin-tryon --ignore-existing;
+      /usr/bin/mc anonymous set public myminio/fashionpin-media;
+      /usr/bin/mc anonymous set public myminio/fashionpin-products;
+      /usr/bin/mc anonymous set public myminio/fashionpin-pins;
+      /usr/bin/mc anonymous set public myminio/fashionpin-avatars;
+      /usr/bin/mc anonymous set public myminio/fashionpin-tryon;
+      exit 0;
+      "
+    networks:
+      - fashionpin-net
+
   media-service:
     build:
       context: .
@@ -761,12 +806,18 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       GRPC_PORT: "9101"
+      STORAGE_PROVIDER: s3
+      S3_ENDPOINT: http://minio:9000
+      S3_PUBLIC_ENDPOINT: http://194.163.166.16:9000
+      S3_BUCKET_NAME: fashionpin-media
+      S3_ACCESS_KEY: minioadmin
+      S3_SECRET_KEY: FashionPinS3SecureKey2026!
     depends_on:
       - discovery-service
       - config-server
       - postgres
       - redis
-      - kafka
+      - minio
     networks:
       - fashionpin-net
 
@@ -774,6 +825,7 @@ services:
 volumes:
   postgres_data:
   grafana_data:
+  minio_data:
 
 networks:
   fashionpin-net:

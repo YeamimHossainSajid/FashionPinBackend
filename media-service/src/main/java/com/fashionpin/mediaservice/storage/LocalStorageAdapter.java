@@ -9,9 +9,11 @@ import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(name = "storage.provider", havingValue = "local")
 public class LocalStorageAdapter implements StoragePort {
 
     private static final Logger log = LoggerFactory.getLogger(LocalStorageAdapter.class);
