@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemTypeRepository extends JpaRepository<ItemType, String> {
     Optional<ItemType> findByCategoryIdAndSlug(String categoryId, String slug);
-    Optional<ItemType> findBySlug(String slug);
+    Optional<ItemType> findFirstByCategoryIdAndSlug(String categoryId, String slug);
+    Optional<ItemType> findFirstBySlug(String slug);
+    List<ItemType> findAllBySlug(String slug);
     List<ItemType> findByCategoryIdAndIsActiveTrueOrderByDisplayOrderAsc(String categoryId);
     boolean existsByCategoryIdAndSlug(String categoryId, String slug);
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> {
+    Optional<Category> findFirstBySlug(String slug);
     Optional<Category> findBySlug(String slug);
     List<Category> findByIsActiveTrueOrderByDisplayOrderAsc();
     List<Category> findByParentIdIsNullAndIsActiveTrueOrderByDisplayOrderAsc();

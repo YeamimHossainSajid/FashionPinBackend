@@ -99,10 +99,17 @@ public class ProductService {
 
         // Attach dynamic category / itemType if matching slug found
         if (request.getCategory() != null) {
-            categoryRepository.findBySlug(request.getCategory().toLowerCase().trim()).ifPresent(product::setDynamicCategory);
+            categoryRepository.findFirstBySlug(request.getCategory().toLowerCase().trim()).ifPresent(product::setDynamicCategory);
         }
         if (request.getSubcategory() != null) {
-            itemTypeRepository.findBySlug(request.getSubcategory().toLowerCase().trim()).ifPresent(product::setDynamicItemType);
+            String subcatSlug = request.getSubcategory().toLowerCase().trim();
+            if (product.getDynamicCategory() != null) {
+                itemTypeRepository.findFirstByCategoryIdAndSlug(product.getDynamicCategory().getId(), subcatSlug)
+                        .or(() -> itemTypeRepository.findFirstBySlug(subcatSlug))
+                        .ifPresent(product::setDynamicItemType);
+            } else {
+                itemTypeRepository.findFirstBySlug(subcatSlug).ifPresent(product::setDynamicItemType);
+            }
         }
 
         Product saved = productRepository.save(product);
