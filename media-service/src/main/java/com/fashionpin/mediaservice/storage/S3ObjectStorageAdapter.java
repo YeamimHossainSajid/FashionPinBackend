@@ -87,24 +87,29 @@ public class S3ObjectStorageAdapter implements StoragePort {
                     .serviceConfiguration(s3Config)
                     .build();
 
-            ensureBucketExists();
+            ensureBucketsExist();
             log.info("Initialized S3 Object Storage Adapter connected to endpoint={} bucket={}", endpoint, bucketName);
         } catch (Exception e) {
             log.error("Failed to initialize S3 Object Storage Client: {}", e.getMessage(), e);
         }
     }
 
-    private void ensureBucketExists() {
+    private void ensureBucketsExist() {
         if (s3Client == null) return;
-        try {
-            s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
-            log.info("S3 Bucket '{}' already exists and is ready.", bucketName);
-        } catch (NoSuchBucketException e) {
-            log.info("Creating S3 Bucket '{}'...", bucketName);
-            s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketName).build());
-            log.info("Successfully created S3 Bucket '{}'.", bucketName);
-        } catch (Exception e) {
-            log.warn("Bucket check/creation encountered warning for '{}': {}", bucketName, e.getMessage());
+        String[] buckets = {bucketName, "fashionpin-products", "fashionpin-pins", "fashionpin-avatars", "fashionpin-tryon"};
+        for (String b : buckets) {
+            try {
+                s3Client.headBucket(HeadBucketRequest.builder().bucket(b).build());
+                log.info("S3 Bucket '{}' already exists and is ready.", b);
+            } catch (Exception e) {
+                try {
+                    log.info("Creating S3 Bucket '{}'...", b);
+                    s3Client.createBucket(CreateBucketRequest.builder().bucket(b).build());
+                    log.info("Successfully created S3 Bucket '{}'.", b);
+                } catch (Exception ex) {
+                    log.warn("Could not create bucket '{}': {}", b, ex.getMessage());
+                }
+            }
         }
     }
 

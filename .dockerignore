@@ -1,0 +1,10 @@
+.git
+.idea
+.vscode
+**/target/
+**/node_modules/
+virtual-tryon-service/venv/
+virtual-tryon-service/weights/
+*.log
+*.tmp
+*.class

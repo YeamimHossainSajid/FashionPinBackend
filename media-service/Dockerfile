@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM eclipse-temurin:21-jdk-alpine AS build
+RUN apk add --no-cache bash maven
 WORKDIR /workspace
 COPY . .
-RUN ./mvnw -pl media-service -am -DskipTests package
+RUN mvn -pl media-service -am -DskipTests package
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
