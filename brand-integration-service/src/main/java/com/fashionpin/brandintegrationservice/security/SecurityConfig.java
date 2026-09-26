@@ -33,9 +33,10 @@ public class SecurityConfig {
                                 "/api/v1/health",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html")
+                                "/swagger-ui.html",
+                                "/api/brands/**",
+                                "/api/v1/brand-integration/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/brands/**", "/api/v1/brand-integration/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
