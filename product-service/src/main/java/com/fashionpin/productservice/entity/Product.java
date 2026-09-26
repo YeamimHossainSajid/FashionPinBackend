@@ -52,7 +52,7 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String slug;
 
-    @Column(length = 500)
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
     @Column(columnDefinition = "TEXT")
@@ -75,7 +75,7 @@ public class Product {
     @Column(nullable = false, length = 3)
     private String currency;
 
-    @Column(name = "primary_media_id")
+    @Column(name = "primary_media_id", columnDefinition = "TEXT")
     private String primaryMediaId;
 
     @Column(name = "media_ids", columnDefinition = "TEXT")
@@ -88,6 +88,8 @@ public class Product {
     private String gender;
     private String color;
     private String size;
+
+    @Column(columnDefinition = "TEXT")
     private String material;
     private String pattern;
     private String style;
