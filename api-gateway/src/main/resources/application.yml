@@ -192,9 +192,52 @@ management:
 
 springdoc:
   api-docs:
+    enabled: true
     path: /v3/api-docs
   swagger-ui:
+    enabled: true
     path: /swagger-ui.html
+    urls:
+      - name: "1. Auth Service"
+        url: /auth-service/v3/api-docs
+      - name: "2. User Service"
+        url: /user-service/v3/api-docs
+      - name: "3. Profile Service"
+        url: /profile-service/v3/api-docs
+      - name: "4. Product Service"
+        url: /product-service/v3/api-docs
+      - name: "5. Fashion Discovery Service"
+        url: /fashion-discovery-service/v3/api-docs
+      - name: "6. Search Service"
+        url: /search-service/v3/api-docs
+      - name: "7. Recommendation Service"
+        url: /recommendation-service/v3/api-docs
+      - name: "8. Outfit Detection Service"
+        url: /outfit-detection-service/v3/api-docs
+      - name: "9. Image Processing Service"
+        url: /image-processing-service/v3/api-docs
+      - name: "10. Visual Search Service"
+        url: /visual-search-service/v3/api-docs
+      - name: "11. AI Stylist Service"
+        url: /ai-stylist-service/v3/api-docs
+      - name: "12. Moodboard Service"
+        url: /moodboard-service/v3/api-docs
+      - name: "13. Shopping Service"
+        url: /shopping-service/v3/api-docs
+      - name: "14. Order Service"
+        url: /order-service/v3/api-docs
+      - name: "15. Payment Service"
+        url: /payment-service/v3/api-docs
+      - name: "16. Inventory Service"
+        url: /inventory-service/v3/api-docs
+      - name: "17. Brand Integration Service"
+        url: /brand-integration-service/v3/api-docs
+      - name: "18. Notification Service"
+        url: /notification-service/v3/api-docs
+      - name: "19. Analytics Service"
+        url: /analytics-service/v3/api-docs
+      - name: "20. Media Service"
+        url: /media-service/v3/api-docs
 
 gateway:
   cors:
