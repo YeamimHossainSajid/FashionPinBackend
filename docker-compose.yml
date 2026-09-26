@@ -472,6 +472,8 @@ services:
       - fashionpin-net
 
   virtual-tryon-service:
+    profiles:
+      - gpu
     build:
       context: .
       dockerfile: virtual-tryon-service/Dockerfile
