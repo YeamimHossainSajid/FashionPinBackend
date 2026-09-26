@@ -180,12 +180,31 @@ docker compose up -d
 
 ---
 
+## 🪣 S3 Object Storage Infrastructure (MinIO)
+
+FashionPin utilizes high-performance, S3-compatible **MinIO Object Storage** deployed with dedicated SSD persistence volumes on the Contabo infrastructure.
+
+- **S3 API Endpoint**: `http://194.163.166.16:9000`
+- **MinIO Web Console**: [http://194.163.166.16:9001](http://194.163.166.16:9001)
+  - **Username**: `minioadmin`
+  - **Password**: `FashionPinS3SecureKey2026!`
+- **Auto-Provisioned Buckets**:
+  - `fashionpin-media`: General media uploads and user attachments
+  - `fashionpin-products`: Luxury catalog photography and high-res garment assets
+  - `fashionpin-pins`: Social Pinterest-style pin visual assets and tags
+  - `fashionpin-avatars`: User avatars and atelier profile banners
+  - `fashionpin-tryon`: AI-generated virtual try-on renders and segmented masks
+
+---
+
 ## 🔒 Security & Firewall Configurations
 
 The Contabo production host is secured via **Ubuntu UFW**:
 - **Port 22**: SSH Remote Administration
 - **Port 8080**: API Gateway & Central Swagger UI
 - **Port 8761**: Eureka Discovery Dashboard
+- **Port 9000**: MinIO S3 API Endpoint
+- **Port 9001**: MinIO Web Console
 - **Port 3000**: Grafana Monitoring
 - **Port 9090**: Prometheus Metrics
 - **Port 9411**: Zipkin Distributed Tracing
