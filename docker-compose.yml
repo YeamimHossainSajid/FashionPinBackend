@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: fashionpin
     ports:
       - "5432:5432"
+    command: ["postgres", "-c", "max_connections=500", "-c", "shared_buffers=256MB"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
@@ -741,7 +742,7 @@ services:
       - fashionpin-net
 
   minio:
-    image: minio/minio:latest
+    image: elestio/minio:latest
     container_name: fashionpin-minio
     command: server /data --console-address ":9001"
     ports:
@@ -752,36 +753,6 @@ services:
       MINIO_ROOT_PASSWORD: FashionPinS3SecureKey2026!
     volumes:
       - minio_data:/data
-    networks:
-      - fashionpin-net
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  minio-init:
-    image: minio/mc:latest
-    container_name: fashionpin-minio-init
-    depends_on:
-      minio:
-        condition: service_started
-    entrypoint: >
-      /bin/sh -c "
-      sleep 3;
-      /usr/bin/mc alias set myminio http://minio:9000 minioadmin FashionPinS3SecureKey2026!;
-      /usr/bin/mc mb myminio/fashionpin-media --ignore-existing;
-      /usr/bin/mc mb myminio/fashionpin-products --ignore-existing;
-      /usr/bin/mc mb myminio/fashionpin-pins --ignore-existing;
-      /usr/bin/mc mb myminio/fashionpin-avatars --ignore-existing;
-      /usr/bin/mc mb myminio/fashionpin-tryon --ignore-existing;
-      /usr/bin/mc anonymous set public myminio/fashionpin-media;
-      /usr/bin/mc anonymous set public myminio/fashionpin-products;
-      /usr/bin/mc anonymous set public myminio/fashionpin-pins;
-      /usr/bin/mc anonymous set public myminio/fashionpin-avatars;
-      /usr/bin/mc anonymous set public myminio/fashionpin-tryon;
-      exit 0;
-      "
     networks:
       - fashionpin-net
 
