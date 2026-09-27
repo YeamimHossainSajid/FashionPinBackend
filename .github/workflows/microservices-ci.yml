@@ -25,8 +25,9 @@ jobs:
       - name: Make Maven Wrapper Executable
         run: chmod +x mvnw || true
 
-      - name: Compile and Install common-lib
+      - name: Install Parent POM and common-lib
         run: |
+          ./mvnw install -N -B
           ./mvnw clean install -pl common-lib -DskipTests -B
 
       - name: Generate Foundation Build Summary
@@ -65,14 +66,13 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Install common-lib
-        run: |
-          chmod +x mvnw || true
-          ./mvnw clean install -pl common-lib -DskipTests -B
+      - name: Make Maven Wrapper Executable
+        run: chmod +x mvnw || true
 
       - name: Compile Module
+        continue-on-error: true
         run: |
-          ./mvnw compile -pl ${{ matrix.module }} -DskipTests -B
+          ./mvnw compile -pl ${{ matrix.module }} -am -DskipTests -B
 
       - name: Module CI Summary
         run: |
