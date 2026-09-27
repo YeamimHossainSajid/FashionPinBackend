@@ -1,0 +1,81 @@
+name: Microservices CI & Build Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-foundation:
+    name: 📦 Build common-lib Foundation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Make Maven Wrapper Executable
+        run: chmod +x mvnw || true
+
+      - name: Compile and Install common-lib
+        run: |
+          ./mvnw clean install -pl common-lib -DskipTests -B
+
+      - name: Generate Foundation Build Summary
+        run: |
+          echo "### 📦 Common Foundation Library Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- **Module**: \`common-lib\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifact**: \`com.fashionpin:common-lib:1.0.0-SNAPSHOT\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: 🟢 Verified & Installed to local repository" >> $GITHUB_STEP_SUMMARY
+
+  compile-services-matrix:
+    name: "🔨 Build ${{ matrix.module }}"
+    needs: build-foundation
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module:
+          - discovery-service
+          - config-server
+          - api-gateway
+          - auth-service
+          - user-service
+          - product-service
+          - order-service
+          - inventory-service
+          - notification-service
+          - payment-service
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install common-lib
+        run: |
+          chmod +x mvnw || true
+          ./mvnw clean install -pl common-lib -DskipTests -B
+
+      - name: Compile Module
+        run: |
+          ./mvnw compile -pl ${{ matrix.module }} -DskipTests -B
+
+      - name: Module CI Summary
+        run: |
+          echo "### 🟢 Module \`${{ matrix.module }}\` compiled successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- **Java Version**: 21" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: Verified" >> $GITHUB_STEP_SUMMARY

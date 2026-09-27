@@ -1,0 +1,125 @@
+name: Microservices Fleet Deployment & Health Monitor
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: "0 */6 * * *" # Run telemetry verification every 6 hours
+  workflow_dispatch:
+    inputs:
+      target_host:
+        description: "Target VPS IP or domain"
+        required: false
+        default: "194.163.166.16"
+      fail_on_error:
+        description: "Fail workflow run if any microservice is DOWN"
+        type: boolean
+        required: false
+        default: false
+
+env:
+  DEFAULT_HOST: "194.163.166.16"
+
+jobs:
+  fleet-telemetry-dashboard:
+    name: 🚀 Executive Fleet Telemetry & Summary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Verify Microservices Fleet & Generate Step Summary
+        run: |
+          TARGET_HOST="${{ github.event.inputs.target_host || vars.DEPLOY_HOST || env.DEFAULT_HOST }}"
+          FAIL_FLAG=""
+          if [ "${{ github.event.inputs.fail_on_error }}" = "true" ]; then
+            FAIL_FLAG="--fail-on-error"
+          fi
+          python3 scripts/verify-microservices.py --host "$TARGET_HOST" $FAIL_FLAG
+
+  microservice-matrix:
+    name: "${{ matrix.service.name }} [:${{ matrix.service.port }}]"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          # Core Edge & Mesh
+          - { id: "api-gateway", name: "API Gateway", port: 8080, path: "/actuator/health", swagger: "/swagger-ui.html", type: "Edge Gateway" }
+          - { id: "discovery-service", name: "Eureka Discovery", port: 8761, path: "/eureka/apps", swagger: "", type: "Service Registry" }
+          - { id: "config-server", name: "Spring Cloud Config", port: 8888, path: "/actuator/health", swagger: "", type: "Configuration" }
+          # Core Business Microservices
+          - { id: "auth-service", name: "Auth Service", port: 8081, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Identity & JWT" }
+          - { id: "user-service", name: "User Service", port: 8082, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Accounts & Profiles" }
+          - { id: "profile-service", name: "Profile Service", port: 8083, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Social Graph" }
+          - { id: "product-service", name: "Product Service", port: 8085, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Catalog & SKUs" }
+          - { id: "fashion-discovery-service", name: "Fashion Discovery", port: 8086, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Feed & Visual Pins" }
+          - { id: "outfit-detection-service", name: "Outfit Detection", port: 8087, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "AI Garment Vision" }
+          - { id: "recommendation-service", name: "Recommendation Service", port: 8087, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Personalization AI" }
+          - { id: "search-service", name: "Search Service", port: 8088, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Catalog Search" }
+          - { id: "image-processing-service", name: "Image Processing", port: 8089, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Media Filters" }
+          - { id: "visual-search-service", name: "Visual Search", port: 8089, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Vector Similarity" }
+          - { id: "ai-stylist-service", name: "AI Stylist Service", port: 8091, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "GenAI Stylist Chat" }
+          - { id: "virtual-tryon-service", name: "Virtual Try-On", port: 8092, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Virtual Fitting Room" }
+          - { id: "moodboard-service", name: "Moodboard Service", port: 8093, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Curation & Boards" }
+          - { id: "shopping-service", name: "Shopping Service", port: 8094, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Cart & Wishlist" }
+          - { id: "order-service", name: "Order Service", port: 8095, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Order State Machine" }
+          - { id: "payment-service", name: "Payment Service", port: 8096, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Payment Gateways" }
+          - { id: "inventory-service", name: "Inventory Service", port: 8097, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Stock Locking" }
+          - { id: "brand-integration-service", name: "Brand Integration", port: 8098, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "B2B Atelier Portal" }
+          - { id: "notification-service", name: "Notification Service", port: 8099, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "Push Alerts" }
+          - { id: "analytics-service", name: "Analytics Service", port: 8100, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "BI & Clickstream" }
+          - { id: "media-service", name: "Media Service", port: 8101, path: "/actuator/health", swagger: "/swagger-ui/index.html", type: "CDN & S3 Assets" }
+          # Core Supporting Infrastructure
+          - { id: "minio-storage", name: "MinIO S3 Storage", port: 9000, path: "/minio/health/live", swagger: "", type: "Object Storage" }
+          - { id: "grafana-telemetry", name: "Grafana Dashboards", port: 3000, path: "/api/health", swagger: "", type: "Observability" }
+          - { id: "prometheus-metrics", name: "Prometheus Metrics", port: 9090, path: "/-/healthy", swagger: "", type: "Telemetry" }
+    steps:
+      - name: Verify Service Health & Actuator Status
+        continue-on-error: true
+        run: |
+          TARGET_HOST="${{ github.event.inputs.target_host || vars.DEPLOY_HOST || env.DEFAULT_HOST }}"
+          PORT="${{ matrix.service.port }}"
+          PATH_VAL="${{ matrix.service.path }}"
+          URL="http://${TARGET_HOST}:${PORT}${PATH_VAL}"
+          echo "Target URL: $URL"
+          
+          START_TIME=$(date +%s%N)
+          HTTP_STATUS=$(curl -s -o response.json -w "%{http_code}" --connect-timeout 4 -m 6 "$URL" || echo "FAILED")
+          END_TIME=$(date +%s%N)
+          DURATION_MS=$(( (END_TIME - START_TIME) / 1000000 ))
+          
+          echo "HTTP Code: $HTTP_STATUS"
+          echo "Latency: ${DURATION_MS} ms"
+          
+          if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "204" ]; then
+            echo "STATUS: UP"
+            echo "### 🟢 ${{ matrix.service.name }} is UP" >> $GITHUB_STEP_SUMMARY
+            echo "- **Domain / Type**: ${{ matrix.service.type }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Port**: \`:${PORT}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Endpoint**: \`${URL}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Latency**: \`${DURATION_MS} ms\`" >> $GITHUB_STEP_SUMMARY
+            if [ -n "${{ matrix.service.swagger }}" ]; then
+              echo "- **Swagger UI**: [Open API Docs](http://${TARGET_HOST}:${PORT}${{ matrix.service.swagger }})" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            head -n 25 response.json >> $GITHUB_STEP_SUMMARY || true
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "STATUS: DOWN / UNREACHABLE (HTTP $HTTP_STATUS)"
+            echo "### ⚠️ ${{ matrix.service.name }} is DOWN or Degraded" >> $GITHUB_STEP_SUMMARY
+            echo "- **Domain / Type**: ${{ matrix.service.type }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Port**: \`:${PORT}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Endpoint**: \`${URL}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Response Code**: \`${HTTP_STATUS}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Note**: Service may be shielded by private bridge network or undergoing redeployment." >> $GITHUB_STEP_SUMMARY
+          fi

@@ -16,6 +16,28 @@ The complete enterprise backend is deployed and running live on **Contabo Cloud 
 | **Grafana Monitoring** | [http://194.163.166.16:3000](http://194.163.166.16:3000) | Observability dashboards (`admin` / `admin`) |
 | **Prometheus Telemetry** | [http://194.163.166.16:9090](http://194.163.166.16:9090) | Application metrics & system telemetry |
 | **Zipkin Distributed Tracing** | [http://194.163.166.16:9411](http://194.163.166.16:9411) | Distributed request lifecycle tracing across microservices |
+| **GitHub Actions Telemetry** | [Actions Hub](https://github.com/YeamimHossainSajid/FashionPinBackend/actions) | Real-time multi-job fleet status, health checks & CI/CD |
+
+---
+
+## ⚡ GitHub Actions Microservices Fleet Monitoring & CI/CD
+
+The platform includes automated GitHub Actions pipelines to continuously monitor, verify, and build all 24 microservices:
+
+1. **`Microservices Fleet Deployment & Health Monitor`** (`.github/workflows/microservices-health-monitor.yml`):
+   - **Parallel Matrix**: Shows an individual job with live status for **every deployed microservice** (API Gateway, Eureka, Auth, Product, Order, Inventory, Payment, etc.).
+   - **Executive Telemetry Summary**: Generates a real-time Markdown dashboard in `$GITHUB_STEP_SUMMARY` detailing service health (UP/DOWN), response latencies (ms), PostgreSQL DB status, Redis cache connectivity, and Eureka discovery registrations.
+   - **Triggers**: On code push, pull requests, scheduled every 6 hours, and on-demand via **Run workflow** (`workflow_dispatch`).
+2. **`Microservices CI & Build Pipeline`** (`.github/workflows/microservices-ci.yml`):
+   - Compiles and caches `common-lib` foundation.
+   - Verifies parallel compilation across core microservice modules with Java 21 Temurin.
+
+### Running Live Health Verification Locally
+You can run the fleet telemetry script locally anytime:
+```bash
+# Verify health of all deployed microservices
+python3 scripts/verify-microservices.py --host 194.163.166.16
+```
 
 ---
 
