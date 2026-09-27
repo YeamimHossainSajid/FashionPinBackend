@@ -155,6 +155,23 @@ public class OrderService {
                 .map(this::mapToResponse);
     }
 
+    @Transactional(readOnly = true)
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Transactional
+    public OrderResponse updateOrderStatus(String orderIdOrNumber, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderIdOrNumber)
+                .or(() -> orderRepository.findByOrderNumber(orderIdOrNumber))
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found: " + orderIdOrNumber));
+        order.setStatus(newStatus);
+        Order updated = orderRepository.save(order);
+        log.info("Order {} status updated to {}", order.getOrderNumber(), newStatus);
+        return mapToResponse(updated);
+    }
+
     public OrderResponse mapToResponse(Order order) {
         ShippingAddressDto addressDto = null;
         if (order.getShippingAddress() != null) {

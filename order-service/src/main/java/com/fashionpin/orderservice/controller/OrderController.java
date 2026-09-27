@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.fashionpin.orderservice.entity.OrderStatus;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 @RestController
 @RequestMapping
@@ -50,17 +52,24 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    @GetMapping({"/api/orders/my-orders", "/api/v1/orders/my-orders"})
-    @Operation(summary = "Get order history for authenticated user")
-    public ResponseEntity<ApiResponse<Page<OrderResponse>>> getMyOrders(
-            Principal principal,
+    @GetMapping({"/api/orders", "/api/v1/orders"})
+    @Operation(summary = "Get all orders (Admin)")
+    public ResponseEntity<ApiResponse<Page<OrderResponse>>> getAllOrders(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+            @RequestParam(name = "size", defaultValue = "50") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<OrderResponse> response = orderService.getMyOrders(principal.getName(), pageable);
+        Page<OrderResponse> response = orderService.getAllOrders(pageable);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @PatchMapping({"/api/orders/{id}/status", "/api/v1/orders/{id}/status"})
+    @Operation(summary = "Update order status")
+    public ResponseEntity<ApiResponse<OrderResponse>> updateOrderStatus(
+            @PathVariable("id") String id,
+            @RequestBody java.util.Map<String, String> body) {
+        String statusStr = body.get("status");
+        OrderStatus status = OrderStatus.valueOf(statusStr.toUpperCase());
+        OrderResponse response = orderService.updateOrderStatus(id, status);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }
