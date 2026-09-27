@@ -46,10 +46,10 @@ public class S3ObjectStorageAdapter implements StoragePort {
 
     public S3ObjectStorageAdapter(
             @Value("${storage.s3.endpoint:http://minio:9000}") String endpoint,
-            @Value("${storage.s3.public-endpoint:http://194.163.166.16:9000}") String publicEndpoint,
+            @Value("${storage.s3.public-endpoint:http://localhost:9000}") String publicEndpoint,
             @Value("${storage.s3.bucket-name:fashionpin-media}") String bucketName,
             @Value("${storage.s3.access-key:minioadmin}") String accessKey,
-            @Value("${storage.s3.secret-key:FashionPinS3SecureKey2026!}") String secretKey,
+            @Value("${storage.s3.secret-key:change_me_in_production}") String secretKey,
             @Value("${storage.s3.region:us-east-1}") String regionStr,
             @Value("${storage.s3.path-style-access:true}") boolean pathStyleAccess) {
         this.endpoint = endpoint;

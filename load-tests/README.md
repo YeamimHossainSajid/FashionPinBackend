@@ -107,11 +107,11 @@ k6 run quick-400-vus.js
 # 3. Run standard production load test
 ./run-tests.sh --scenario load
 
-# 4. Run load test against Contabo VPS live deployment
-./run-tests.sh --scenario load --target http://194.163.166.16:8080
+# 4. Run load test against Remote VPS deployment
+./run-tests.sh --scenario load --target http://<YOUR_SERVER_IP>:8080
 
-# 5. 400 Sustained Concurrent Users for 30 Seconds against live Contabo VPS
-./run-tests.sh --scenario load --vus 400 --duration 30s --target http://194.163.166.16:8080
+# 5. 400 Sustained Concurrent Users for 30 Seconds against live server
+./run-tests.sh --scenario load --vus 400 --duration 30s --target http://<YOUR_SERVER_IP>:8080
 
 # 6. Run stress test with custom virtual users and duration
 ./run-tests.sh --scenario stress --vus 250 --duration 5m
@@ -131,7 +131,7 @@ You can run individual scenario files or use the unified `main.js`:
 k6 run main.js
 
 # Target Remote Production VPS
-k6 run -e GATEWAY_URL=http://194.163.166.16:8080 -e SCENARIO=load main.js
+k6 run -e GATEWAY_URL=http://<YOUR_SERVER_IP>:8080 -e SCENARIO=load main.js
 
 # Stress Test
 k6 run -e SCENARIO=stress main.js

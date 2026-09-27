@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       target_host:
-        description: "Target VPS IP or domain"
+        description: "Target VPS IP or domain (defaults to DEPLOY_HOST secret)"
         required: false
-        default: "194.163.166.16"
+        default: ""
       fail_on_error:
         description: "Fail workflow run if any microservice is DOWN"
         type: boolean
@@ -20,7 +20,7 @@ on:
         default: false
 
 env:
-  DEFAULT_HOST: "194.163.166.16"
+  DEFAULT_HOST: ${{ secrets.DEPLOY_HOST || vars.DEPLOY_HOST || 'localhost' }}
 
 jobs:
   fleet-telemetry-dashboard:
@@ -37,7 +37,10 @@ jobs:
 
       - name: Verify Microservices Fleet & Generate Step Summary
         run: |
-          TARGET_HOST="${{ github.event.inputs.target_host || vars.DEPLOY_HOST || env.DEFAULT_HOST }}"
+          TARGET_HOST="${{ github.event.inputs.target_host }}"
+          if [ -z "$TARGET_HOST" ]; then
+            TARGET_HOST="${{ secrets.DEPLOY_HOST || vars.DEPLOY_HOST || 'localhost' }}"
+          fi
           FAIL_FLAG=""
           if [ "${{ github.event.inputs.fail_on_error }}" = "true" ]; then
             FAIL_FLAG="--fail-on-error"
@@ -85,7 +88,10 @@ jobs:
       - name: Verify Service Health & Actuator Status
         continue-on-error: true
         run: |
-          TARGET_HOST="${{ github.event.inputs.target_host || vars.DEPLOY_HOST || env.DEFAULT_HOST }}"
+          TARGET_HOST="${{ github.event.inputs.target_host }}"
+          if [ -z "$TARGET_HOST" ]; then
+            TARGET_HOST="${{ secrets.DEPLOY_HOST || vars.DEPLOY_HOST || 'localhost' }}"
+          fi
           PORT="${{ matrix.service.port }}"
           PATH_VAL="${{ matrix.service.path }}"
           URL="http://${TARGET_HOST}:${PORT}${PATH_VAL}"

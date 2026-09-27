@@ -12,7 +12,7 @@ const gatewayLatency = new Trend('gateway_response_time_ms');
 const successfulHits = new Counter('successful_hits_200');
 const rateLimitedOrErrors = new Counter('gateway_errors');
 
-const GATEWAY_URL = (__ENV.GATEWAY_URL || __ENV.BASE_URL || 'http://194.163.166.16:8080').replace(/\/+$/, '');
+const GATEWAY_URL = (__ENV.GATEWAY_URL || __ENV.BASE_URL || 'http://localhost:8080').replace(/\/+$/, '');
 
 export const options = {
   // 400 simultaneous virtual users hitting AT ONCE

@@ -513,9 +513,9 @@ def generate_markdown_summary(host, results, eureka_registry):
     md.append("### 🔗 Cloud Infrastructure Quick Access Endpoints\n")
     md.append(f"- 🌐 **Central Swagger UI Hub**: [http://{host}:8080/swagger-ui.html](http://{host}:8080/swagger-ui.html)")
     md.append(f"- 🧭 **Netflix Eureka Dashboard**: [http://{host}:8761](http://{host}:8761)")
-    md.append(f"- 📊 **Grafana Observability**: [http://{host}:3000](http://{host}:3000) `(admin / admin)`")
+    md.append(f"- 📊 **Grafana Observability**: [http://{host}:3000](http://{host}:3000)")
     md.append(f"- 📈 **Prometheus Telemetry**: [http://{host}:9090](http://{host}:9090)")
-    md.append(f"- 🪣 **MinIO S3 Console**: [http://{host}:9001](http://{host}:9001) `(minioadmin / FashionPinS3SecureKey2026!)`")
+    md.append(f"- 🪣 **MinIO S3 Console**: [http://{host}:9001](http://{host}:9001)")
     md.append(f"- 🪣 **MinIO S3 API**: `http://{host}:9000`")
     md.append("\n")
 
@@ -524,7 +524,8 @@ def generate_markdown_summary(host, results, eureka_registry):
 
 def main():
     parser = argparse.ArgumentParser(description="FashionPin Microservices Fleet Health Check")
-    parser.add_argument("--host", default="194.163.166.16", help="Target server IP or domain")
+    default_host = os.environ.get("DEPLOY_HOST", "localhost")
+    parser.add_argument("--host", default=default_host, help="Target server IP or domain (default: DEPLOY_HOST env or localhost)")
     parser.add_argument("--timeout", type=float, default=4.0, help="Per-request HTTP timeout in seconds")
     parser.add_argument("--summary-file", help="File to append or write GitHub Step Summary markdown to")
     parser.add_argument("--fail-on-error", action="store_true", help="Exit with code 1 if any service is DOWN")

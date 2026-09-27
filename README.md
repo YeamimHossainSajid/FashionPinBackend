@@ -10,12 +10,12 @@ The complete enterprise backend is deployed and running live on **Contabo Cloud 
 
 | System / Component | Live URL / Endpoint | Credentials / Purpose |
 | :--- | :--- | :--- |
-| **Central Swagger UI Hub** | [http://194.163.166.16:8080/swagger-ui.html](http://194.163.166.16:8080/swagger-ui.html) | Interactive API exploration for **all 20 microservices** |
-| **API Gateway (Public Edge)** | `http://194.163.166.16:8080` | High-performance reverse proxy & JWT authentication |
-| **Eureka Service Registry** | [http://194.163.166.16:8761](http://194.163.166.16:8761) | Real-time instance discovery & service health registry |
-| **Grafana Monitoring** | [http://194.163.166.16:3000](http://194.163.166.16:3000) | Observability dashboards (`admin` / `admin`) |
-| **Prometheus Telemetry** | [http://194.163.166.16:9090](http://194.163.166.16:9090) | Application metrics & system telemetry |
-| **Zipkin Distributed Tracing** | [http://194.163.166.16:9411](http://194.163.166.16:9411) | Distributed request lifecycle tracing across microservices |
+| **Central Swagger UI Hub** | `http://<SERVER_IP>:8080/swagger-ui.html` | Interactive API exploration for **all 20 microservices** |
+| **API Gateway (Public Edge)** | `http://<SERVER_IP>:8080` | High-performance reverse proxy & JWT authentication |
+| **Eureka Service Registry** | `http://<SERVER_IP>:8761` | Real-time instance discovery & service health registry |
+| **Grafana Monitoring** | `http://<SERVER_IP>:3000` | Observability dashboards (`admin` / `<GRAFANA_PASSWORD>`) |
+| **Prometheus Telemetry** | `http://<SERVER_IP>:9090` | Application metrics & system telemetry |
+| **Zipkin Distributed Tracing** | `http://<SERVER_IP>:9411` | Distributed request lifecycle tracing across microservices |
 | **GitHub Actions Telemetry** | [Actions Hub](https://github.com/YeamimHossainSajid/FashionPinBackend/actions) | Real-time multi-job fleet status, health checks & CI/CD |
 
 ---
@@ -28,6 +28,7 @@ The platform includes automated GitHub Actions pipelines to continuously monitor
    - **Parallel Matrix**: Shows an individual job with live status for **every deployed microservice** (API Gateway, Eureka, Auth, Product, Order, Inventory, Payment, etc.).
    - **Executive Telemetry Summary**: Generates a real-time Markdown dashboard in `$GITHUB_STEP_SUMMARY` detailing service health (UP/DOWN), response latencies (ms), PostgreSQL DB status, Redis cache connectivity, and Eureka discovery registrations.
    - **Triggers**: On code push, pull requests, scheduled every 6 hours, and on-demand via **Run workflow** (`workflow_dispatch`).
+   - **Secret Configuration**: Set repository secret `DEPLOY_HOST` in **Settings > Secrets and variables > Actions** to monitor your remote server securely without exposing your IP.
 2. **`Microservices CI & Build Pipeline`** (`.github/workflows/microservices-ci.yml`):
    - Compiles and caches `common-lib` foundation.
    - Verifies parallel compilation across core microservice modules with Java 21 Temurin.
@@ -35,8 +36,8 @@ The platform includes automated GitHub Actions pipelines to continuously monitor
 ### Running Live Health Verification Locally
 You can run the fleet telemetry script locally anytime:
 ```bash
-# Verify health of all deployed microservices
-python3 scripts/verify-microservices.py --host 194.163.166.16
+# Verify health of all deployed microservices (defaults to DEPLOY_HOST env or localhost)
+python3 scripts/verify-microservices.py --host <SERVER_IP>
 ```
 
 ---
@@ -48,33 +49,33 @@ Every microservice exposes both a direct interactive Swagger UI and unified aggr
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                  Central API Gateway Swagger UI Hub                       │
-│             http://194.163.166.16:8080/swagger-ui.html                     │
+│             http://<SERVER_IP>:8080/swagger-ui.html                     │
 │   (Select any microservice definition from top-right dropdown to test)    │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
 
 | # | Microservice | Domain | REST Port | gRPC Port | Dedicated DB | Direct Swagger UI Link |
 | :-: | :--- | :--- | :-: | :-: | :--- | :--- |
-| **1** | **auth-service** | Identity & Security | `8081` | `9081` | `auth_db` | [Swagger UI :8081](http://194.163.166.16:8081/swagger-ui/index.html) |
-| **2** | **user-service** | Accounts & Preferences | `8082` | `9082` | `user_db` | [Swagger UI :8082](http://194.163.166.16:8082/swagger-ui/index.html) |
-| **3** | **profile-service** | Social Graph & Style DNA | `8083` | `9083` | `profile_db` | [Swagger UI :8083](http://194.163.166.16:8083/swagger-ui/index.html) |
-| **4** | **fashion-discovery-service** | Visual Feed & Taxonomy | `8084` | `9084` | `fashion_discovery_db` | [Swagger UI :8084](http://194.163.166.16:8084/swagger-ui/index.html) |
-| **5** | **product-service** | Catalog, SKUs & Categories | `8085` | `9085` | `product_db` | [Swagger UI :8085](http://194.163.166.16:8085/swagger-ui/index.html) |
-| **6** | **search-service** | Multi-Faceted Catalog Search | `8086` | `9086` | `search_db` | [Swagger UI :8086](http://194.163.166.16:8086/swagger-ui/index.html) |
-| **7** | **recommendation-service** | AI Personalization Matrix | `8087` | `9087` | `recommendation_db` | [Swagger UI :8087](http://194.163.166.16:8087/swagger-ui/index.html) |
-| **8** | **outfit-detection-service** | Garment Segmentation | `8088` | `9088` | `outfit_detection_db` | [Swagger UI :8088](http://194.163.166.16:8088/swagger-ui/index.html) |
-| **9** | **image-processing-service** | Chromatic Processing | `8089` | `9089` | `image_processing_db` | [Swagger UI :8089](http://194.163.166.16:8089/swagger-ui/index.html) |
-| **10** | **visual-search-service** | Vector Similarity Search | `8090` | `9090` | `visual_search_db` | [Swagger UI :8090](http://194.163.166.16:8090/swagger-ui/index.html) |
-| **11** | **ai-stylist-service** | Generative Stylist Chat | `8091` | `9091` | `ai_stylist_db` | [Swagger UI :8091](http://194.163.166.16:8091/swagger-ui/index.html) |
-| **12** | **moodboard-service** | Visual Curation & Pins | `8092` | `9092` | `moodboard_db` | [Swagger UI :8092](http://194.163.166.16:8092/swagger-ui/index.html) |
-| **13** | **shopping-service** | Cart, Wishlists & Bundles | `8093` | `9093` | `shopping_db` | [Swagger UI :8093](http://194.163.166.16:8093/swagger-ui/index.html) |
-| **14** | **order-service** | Order State Machine | `8094` | `9094` | `order_db` | [Swagger UI :8094](http://194.163.166.16:8094/swagger-ui/index.html) |
-| **15** | **payment-service** | Payment Gateways & Ledger | `8095` | `9095` | `payment_db` | [Swagger UI :8095](http://194.163.166.16:8095/swagger-ui/index.html) |
-| **16** | **inventory-service** | Real-Time Stock Locking | `8096` | `9096` | `inventory_db` | [Swagger UI :8096](http://194.163.166.16:8096/swagger-ui/index.html) |
-| **17** | **brand-integration-service**| Brand Onboarding & B2B | `8097` | `9097` | `brand_integration_db` | [Swagger UI :8097](http://194.163.166.16:8097/swagger-ui/index.html) |
-| **18** | **notification-service** | Push Alerts & WebSockets | `8098` | `9098` | `notification_db` | [Swagger UI :8098](http://194.163.166.16:8098/swagger-ui/index.html) |
-| **19** | **analytics-service** | Clickstream & GMV Metrics | `8099` | `9099` | `analytics_db` | [Swagger UI :8099](http://194.163.166.16:8099/swagger-ui/index.html) |
-| **20** | **media-service** | Object Storage & Asset CDN | `8101` | `9101` | `media_db` | [Swagger UI :8101](http://194.163.166.16:8101/swagger-ui/index.html) |
+| **1** | **auth-service** | Identity & Security | `8081` | `9081` | `auth_db` | [Swagger UI :8081](http://<SERVER_IP>:8081/swagger-ui/index.html) |
+| **2** | **user-service** | Accounts & Preferences | `8082` | `9082` | `user_db` | [Swagger UI :8082](http://<SERVER_IP>:8082/swagger-ui/index.html) |
+| **3** | **profile-service** | Social Graph & Style DNA | `8083` | `9083` | `profile_db` | [Swagger UI :8083](http://<SERVER_IP>:8083/swagger-ui/index.html) |
+| **4** | **fashion-discovery-service** | Visual Feed & Taxonomy | `8084` | `9084` | `fashion_discovery_db` | [Swagger UI :8084](http://<SERVER_IP>:8084/swagger-ui/index.html) |
+| **5** | **product-service** | Catalog, SKUs & Categories | `8085` | `9085` | `product_db` | [Swagger UI :8085](http://<SERVER_IP>:8085/swagger-ui/index.html) |
+| **6** | **search-service** | Multi-Faceted Catalog Search | `8086` | `9086` | `search_db` | [Swagger UI :8086](http://<SERVER_IP>:8086/swagger-ui/index.html) |
+| **7** | **recommendation-service** | AI Personalization Matrix | `8087` | `9087` | `recommendation_db` | [Swagger UI :8087](http://<SERVER_IP>:8087/swagger-ui/index.html) |
+| **8** | **outfit-detection-service** | Garment Segmentation | `8088` | `9088` | `outfit_detection_db` | [Swagger UI :8088](http://<SERVER_IP>:8088/swagger-ui/index.html) |
+| **9** | **image-processing-service** | Chromatic Processing | `8089` | `9089` | `image_processing_db` | [Swagger UI :8089](http://<SERVER_IP>:8089/swagger-ui/index.html) |
+| **10** | **visual-search-service** | Vector Similarity Search | `8090` | `9090` | `visual_search_db` | [Swagger UI :8090](http://<SERVER_IP>:8090/swagger-ui/index.html) |
+| **11** | **ai-stylist-service** | Generative Stylist Chat | `8091` | `9091` | `ai_stylist_db` | [Swagger UI :8091](http://<SERVER_IP>:8091/swagger-ui/index.html) |
+| **12** | **moodboard-service** | Visual Curation & Pins | `8092` | `9092` | `moodboard_db` | [Swagger UI :8092](http://<SERVER_IP>:8092/swagger-ui/index.html) |
+| **13** | **shopping-service** | Cart, Wishlists & Bundles | `8093` | `9093` | `shopping_db` | [Swagger UI :8093](http://<SERVER_IP>:8093/swagger-ui/index.html) |
+| **14** | **order-service** | Order State Machine | `8094` | `9094` | `order_db` | [Swagger UI :8094](http://<SERVER_IP>:8094/swagger-ui/index.html) |
+| **15** | **payment-service** | Payment Gateways & Ledger | `8095` | `9095` | `payment_db` | [Swagger UI :8095](http://<SERVER_IP>:8095/swagger-ui/index.html) |
+| **16** | **inventory-service** | Real-Time Stock Locking | `8096` | `9096` | `inventory_db` | [Swagger UI :8096](http://<SERVER_IP>:8096/swagger-ui/index.html) |
+| **17** | **brand-integration-service**| Brand Onboarding & B2B | `8097` | `9097` | `brand_integration_db` | [Swagger UI :8097](http://<SERVER_IP>:8097/swagger-ui/index.html) |
+| **18** | **notification-service** | Push Alerts & WebSockets | `8098` | `9098` | `notification_db` | [Swagger UI :8098](http://<SERVER_IP>:8098/swagger-ui/index.html) |
+| **19** | **analytics-service** | Clickstream & GMV Metrics | `8099` | `9099` | `analytics_db` | [Swagger UI :8099](http://<SERVER_IP>:8099/swagger-ui/index.html) |
+| **20** | **media-service** | Object Storage & Asset CDN | `8101` | `9101` | `media_db` | [Swagger UI :8101](http://<SERVER_IP>:8101/swagger-ui/index.html) |
 
 ---
 
@@ -164,7 +165,7 @@ flowchart TD
 
 ### Connecting to the Production Server
 ```bash
-ssh root@194.163.166.16
+ssh <user>@<server-ip>
 ```
 
 ### Managing the Microservices Stack
@@ -213,11 +214,11 @@ k6 run quick-400-vus.js
 # Or target local gateway:
 # k6 run -e GATEWAY_URL=http://localhost:8080 quick-400-vus.js
 
-# Production load test against live Contabo VPS
-./run-tests.sh --scenario load --target http://194.163.166.16:8080
+# Production load test against remote server
+./run-tests.sh --scenario load --target http://<SERVER_IP>:8080
 
-# 400 Sustained Concurrent Users for 30 Seconds against live Contabo VPS
-./run-tests.sh --scenario load --vus 400 --duration 30s --target http://194.163.166.16:8080
+# 400 Sustained Concurrent Users for 30 Seconds against live server
+./run-tests.sh --scenario load --vus 400 --duration 30s --target http://<SERVER_IP>:8080
 
 # Stress test (pushing breaking points)
 ./run-tests.sh --scenario stress --vus 250 --duration 5m
@@ -232,12 +233,12 @@ See [`load-tests/README.md`](file:///Users/sajid/Documents/FashionPinFullStack/F
 
 ## 🪣 S3 Object Storage Infrastructure (MinIO)
 
-FashionPin utilizes high-performance, S3-compatible **MinIO Object Storage** deployed with dedicated SSD persistence volumes on the Contabo infrastructure.
+FashionPin utilizes high-performance, S3-compatible **MinIO Object Storage** deployed with dedicated SSD persistence volumes on the infrastructure.
 
-- **S3 API Endpoint**: `http://194.163.166.16:9000`
-- **MinIO Web Console**: [http://194.163.166.16:9001](http://194.163.166.16:9001)
+- **S3 API Endpoint**: `http://<SERVER_IP>:9000`
+- **MinIO Web Console**: `http://<SERVER_IP>:9001`
   - **Username**: `minioadmin`
-  - **Password**: `FashionPinS3SecureKey2026!`
+  - **Password**: `<YOUR_MINIO_SECRET_KEY>`
 - **Auto-Provisioned Buckets**:
   - `fashionpin-media`: General media uploads and user attachments
   - `fashionpin-products`: Luxury catalog photography and high-res garment assets

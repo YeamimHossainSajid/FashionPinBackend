@@ -5,7 +5,7 @@
 
 export const CONFIG = {
   // Target API Gateway URL. Can be overridden via environment variables:
-  // e.g. k6 run -e GATEWAY_URL=http://194.163.166.16:8080 main.js
+  // e.g. k6 run -e GATEWAY_URL=http://<YOUR_SERVER_IP>:8080 main.js
   gatewayUrl: (__ENV.GATEWAY_URL || __ENV.BASE_URL || 'http://localhost:8080').replace(/\/+$/, ''),
 
   // Default Request Timeout in milliseconds

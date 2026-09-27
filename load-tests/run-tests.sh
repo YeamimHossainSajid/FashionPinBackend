@@ -43,7 +43,7 @@ usage() {
   echo ""
   echo "Examples:"
   echo "  ./run-tests.sh --scenario smoke"
-  echo "  ./run-tests.sh --scenario load --target http://194.163.166.16:8080"
+  echo "  ./run-tests.sh --scenario load --target http://<YOUR_SERVER_IP>:8080"
   echo "  ./run-tests.sh --scenario stress --vus 200 --duration 3m"
   echo "  ./run-tests.sh --docker --scenario smoke"
   echo ""

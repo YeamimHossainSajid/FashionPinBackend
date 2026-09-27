@@ -4,7 +4,7 @@
  *
  * Example:
  *   k6 run -e SCENARIO=smoke main.js
- *   k6 run -e SCENARIO=load -e GATEWAY_URL=http://194.163.166.16:8080 main.js
+ *   k6 run -e SCENARIO=load -e GATEWAY_URL=http://<YOUR_SERVER_IP>:8080 main.js
  *   k6 run -e SCENARIO=stress main.js
  */
 
