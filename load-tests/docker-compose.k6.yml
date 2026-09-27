@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  k6:
+    image: grafana/k6:latest
+    container_name: fashionpin-k6-runner
+    volumes:
+      - .:/load-tests
+    working_dir: /load-tests
+    environment:
+      - GATEWAY_URL=${GATEWAY_URL:-http://api-gateway:8080}
+      - SCENARIO=${SCENARIO:-smoke}
+    command: ["run", "main.js"]
+    networks:
+      - fashionpin-net
+
+networks:
+  fashionpin-net:
+    name: fashionpin-net
+    external: true

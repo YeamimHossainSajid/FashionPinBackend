@@ -1,0 +1,421 @@
+{
+  "options": {
+    "noColor": false,
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ],
+    "summaryTimeUnit": ""
+  },
+  "state": {
+    "isStdOutTTY": true,
+    "isStdErrTTY": true,
+    "testRunDurationMs": 29417.777
+  },
+  "metrics": {
+    "http_req_duration{endpoint:catalog_browse}": {
+      "values": {
+        "max": 6984.945,
+        "p(90)": 1987.483,
+        "p(95)": 3445.3289999999997,
+        "avg": 881.1437573739292,
+        "min": 360.792,
+        "med": 484.939
+      },
+      "thresholds": {
+        "p(95)<500": {
+          "ok": false
+        }
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 381.4938999999998,
+        "avg": 40.117350150037524,
+        "min": 0,
+        "med": 0,
+        "max": 918.999,
+        "p(90)": 0
+      }
+    },
+    "group_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 12411.743208749998,
+        "avg": 6503.766612738936,
+        "min": 373.898083,
+        "med": 6655.433354000001,
+        "max": 15702.570584,
+        "p(90)": 11193.9615415
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 544.285,
+        "max": 8517.59,
+        "p(90)": 3668.4904,
+        "p(95)": 4808.947299999999,
+        "avg": 1266.684622069398,
+        "min": 357.694
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0,
+        "max": 0,
+        "p(90)": 0
+      }
+    },
+    "http_reqs": {
+      "contains": "default",
+      "values": {
+        "count": 5332,
+        "rate": 181.25094904349842
+      },
+      "type": "counter"
+    },
+    "fashionpin_gateway_errors_total": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 72.50717822764106,
+        "count": 2133
+      }
+    },
+    "fashionpin_gateway_requests_total": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 5461,
+        "rate": 185.6360526493895
+      }
+    },
+    "vus": {
+      "contains": "default",
+      "values": {
+        "min": 400,
+        "max": 400,
+        "value": 400
+      },
+      "type": "gauge"
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0.222,
+        "avg": 0.05216935483870846,
+        "min": 0.003,
+        "med": 0.017,
+        "max": 3.792,
+        "p(90)": 0.053
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 400,
+        "min": 400,
+        "max": 400
+      }
+    },
+    "http_req_waiting": {
+      "contains": "time",
+      "values": {
+        "med": 402.8325,
+        "max": 8127.045,
+        "p(90)": 2508.2757,
+        "p(95)": 3443.85585,
+        "avg": 842.1557783195831,
+        "min": 226.191
+      },
+      "type": "trend"
+    },
+    "checks": {
+      "values": {
+        "rate": 0.5999624906226556,
+        "passes": 3199,
+        "fails": 2133
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.40003750937734434,
+        "passes": 2133,
+        "fails": 3199
+      },
+      "thresholds": {
+        "rate<0.02": {
+          "ok": false
+        }
+      }
+    },
+    "http_req_duration{endpoint:auth_login}": {
+      "thresholds": {
+        "p(95)<600": {
+          "ok": true
+        }
+      },
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0,
+        "min": 0,
+        "med": 0
+      }
+    },
+    "fashionpin_gateway_latency_ms": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(90)": 2937.0144,
+        "p(95)": 4146.431549999998,
+        "avg": 1044.654455363841,
+        "min": 346.857,
+        "med": 490.688,
+        "max": 8517.59
+      }
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 8517.59,
+        "p(90)": 2937.0144,
+        "p(95)": 4146.431549999998,
+        "avg": 1044.654455363841,
+        "min": 346.857,
+        "med": 490.688
+      },
+      "thresholds": {
+        "p(95)<600": {
+          "ok": false
+        },
+        "p(99)<1200": {
+          "ok": false
+        }
+      }
+    },
+    "http_req_duration{endpoint:search}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 682.3128928939237,
+        "min": 346.857,
+        "med": 456.179,
+        "max": 4393.006,
+        "p(90)": 1185.413,
+        "p(95)": 2593.6899999999996
+      },
+      "thresholds": {
+        "p(95)<700": {
+          "ok": false
+        }
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 1958849,
+        "rate": 66587.25436663687
+      }
+    },
+    "data_received": {
+      "values": {
+        "count": 10887424,
+        "rate": 370096.76156019536
+      },
+      "type": "counter",
+      "contains": "data"
+    },
+    "http_req_blocked": {
+      "values": {
+        "p(90)": 0.02,
+        "p(95)": 382.08394999999996,
+        "avg": 40.13843942235475,
+        "min": 0.001,
+        "med": 0.005,
+        "max": 919.019
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 1536,
+        "rate": 52.21332665619159
+      }
+    },
+    "http_req_duration{endpoint:gateway_health}": {
+      "thresholds": {
+        "p(95)<150": {
+          "ok": false
+        }
+      },
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 518.5175,
+        "max": 3837.194,
+        "p(90)": 2799.3254,
+        "p(95)": 3162.1479499999996,
+        "avg": 1107.3222023809524,
+        "min": 373.65
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 202.4465076894217,
+        "min": 0.007,
+        "med": 106.01,
+        "max": 5707.216,
+        "p(90)": 413.1464000000001,
+        "p(95)": 697.0142999999999
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "med": 6655.5287085,
+        "max": 15702.589917,
+        "p(90)": 11194.004625,
+        "p(95)": 12411.780520749999,
+        "avg": 6503.850056984383,
+        "min": 373.932958
+      }
+    }
+  },
+  "root_group": {
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "groups": [],
+        "checks": [
+            {
+              "path": "::Gateway Health & Edge Status::gateway health status is 200",
+              "id": "6fea6db7abca70b3587da927cd343162",
+              "passes": 84,
+              "fails": 0,
+              "name": "gateway health status is 200"
+            }
+          ],
+        "name": "Gateway Health & Edge Status",
+        "path": "::Gateway Health & Edge Status",
+        "id": "cf8be341123c39147222086a93fc6071"
+      },
+      {
+        "id": "43e9c8505ad77753f09f3a914c2cbe26",
+        "groups": [],
+        "checks": [
+            {
+              "name": "categories status is 200",
+              "path": "::Anonymous Browsing & Discovery::categories status is 200",
+              "id": "311e51eabd1a8d182f6e42f61bdbfdfd",
+              "passes": 1117,
+              "fails": 0
+            },
+            {
+              "id": "398cfeaca745617eb95e60448a488a0a",
+              "passes": 1051,
+              "fails": 0,
+              "name": "catalog browse status is 200",
+              "path": "::Anonymous Browsing & Discovery::catalog browse status is 200"
+            },
+            {
+              "path": "::Anonymous Browsing & Discovery::search status is 200",
+              "id": "59eaf197cdc185c19ac2a62c140b5ebd",
+              "passes": 0,
+              "fails": 971,
+              "name": "search status is 200"
+            },
+            {
+              "id": "5d2283efaa73672de5d17b94b2613954",
+              "passes": 0,
+              "fails": 880,
+              "name": "discovery status is 200",
+              "path": "::Anonymous Browsing & Discovery::discovery status is 200"
+            }
+          ],
+        "name": "Anonymous Browsing & Discovery",
+        "path": "::Anonymous Browsing & Discovery"
+      },
+      {
+        "name": "Guest Cart Operations",
+        "path": "::Guest Cart Operations",
+        "id": "c0dfaa5075f84441bb12cc019a7c987a",
+        "groups": [],
+        "checks": [
+            {
+              "name": "guest cart status is 200",
+              "path": "::Guest Cart Operations::guest cart status is 200",
+              "id": "23844164ecc75103384aed7fc85d23f9",
+              "passes": 398,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "name": "Authenticated User Flow",
+        "path": "::Authenticated User Flow",
+        "id": "634d66639cbcb0ad6b3b6a0c4a6fbadb",
+        "groups": [],
+        "checks": [
+            {
+              "name": "register status is 201 or 200 or 409 (already exists)",
+              "path": "::Authenticated User Flow::register status is 201 or 200 or 409 (already exists)",
+              "id": "1c9f26e072b56fe5bc9c8a6c80cff95e",
+              "passes": 285,
+              "fails": 0
+            },
+            {
+              "name": "profile me status is 200",
+              "path": "::Authenticated User Flow::profile me status is 200",
+              "id": "e2fe4a1a73522018e2541f77924e5400",
+              "passes": 0,
+              "fails": 282
+            },
+            {
+              "fails": 0,
+              "name": "auth cart status is 200",
+              "path": "::Authenticated User Flow::auth cart status is 200",
+              "id": "6950835bfe54d7951394ff2a91e1fc5f",
+              "passes": 264
+            }
+          ]
+      }
+    ],
+    "checks": [],
+    "name": "",
+    "path": ""
+  }
+}

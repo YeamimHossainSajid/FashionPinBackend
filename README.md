@@ -178,6 +178,34 @@ cd FashionPinBackend
 docker compose up -d
 ```
 
+### 🚦 Running k6 Load Tests through API Gateway
+A full-featured k6 load test suite is located in `load-tests/`:
+```bash
+cd load-tests
+
+# Quick smoke test against local API Gateway
+./run-tests.sh --scenario smoke
+
+# Instant 400 Concurrent Users Burst Test (hitting at the exact same moment)
+k6 run quick-400-vus.js
+# Or target local gateway:
+# k6 run -e GATEWAY_URL=http://localhost:8080 quick-400-vus.js
+
+# Production load test against live Contabo VPS
+./run-tests.sh --scenario load --target http://194.163.166.16:8080
+
+# 400 Sustained Concurrent Users for 30 Seconds against live Contabo VPS
+./run-tests.sh --scenario load --vus 400 --duration 30s --target http://194.163.166.16:8080
+
+# Stress test (pushing breaking points)
+./run-tests.sh --scenario stress --vus 250 --duration 5m
+
+# Run inside Docker
+./run-tests.sh --docker --scenario smoke
+```
+Results and interactive visual HTML reports are automatically generated in `load-tests/reports/summary.html`.
+See [`load-tests/README.md`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/load-tests/README.md) for full scenario configurations.
+
 ---
 
 ## 🪣 S3 Object Storage Infrastructure (MinIO)
