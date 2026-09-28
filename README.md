@@ -1,4 +1,4 @@
-# 📖 FashionPin Enterprise Backend — Architecture & Engineering Book
+# 📖 Kymira Enterprise Backend: Architecture & Engineering Book
 
 <div align="center">
 
@@ -45,14 +45,14 @@
 
 ## 🏛️ 1. Executive Overview & Engineering Philosophy
 
-**FashionPin** is an enterprise-grade ecosystem engineered to solve the complex intersection of high-fidelity visual social discovery (Pinterest-style aesthetic feeds) and headless luxury commerce.
+**Kymira** is an enterprise-grade ecosystem engineered to solve the complex intersection of high-fidelity visual social discovery (Pinterest-style aesthetic feeds) and headless luxury commerce.
 
 ### Core Architectural Tenets
-- **Strict Domain-Driven Design (DDD)**: Each business domain is encapsulated in an autonomous microservice with isolated business logic and explicit bounded contexts.
-- **Database-per-Service Pattern**: Complete data segregation across 20+ dedicated PostgreSQL databases. No cross-service SQL joins; inter-service communication is conducted strictly over gRPC or Kafka.
-- **Event-Driven Resilience**: Transactional Outbox Pattern coupled with idempotent consumer handlers to guarantee at-least-once message delivery without distributed database transactions.
-- **Defense-in-Depth Perimeter**: A reactive API Gateway terminating TLS, enforcing JWT claims, managing Redis token-bucket rate limits, and proxying requests into an internal zero-trust container network.
-- **Production-Ready Memory Engineering**: Tuned specifically to run more than 30 microservices and infrastructure containers reliably on resource-managed Cloud VPS instances.
+* **Strict Domain-Driven Design (DDD)**: Each business domain is encapsulated in an autonomous microservice with isolated business logic and explicit bounded contexts.
+* **Database-per-Service Pattern**: Complete data segregation across 20+ dedicated PostgreSQL databases. No cross-service SQL joins; inter-service communication is conducted strictly over gRPC or Kafka.
+* **Event-Driven Resilience**: Transactional Outbox Pattern coupled with idempotent consumer handlers to guarantee at-least-once message delivery without distributed database transactions.
+* **Defense-in-Depth Perimeter**: A reactive API Gateway terminating TLS, enforcing JWT claims, managing Redis token-bucket rate limits, and proxying requests into an internal zero-trust container network.
+* **Production-Ready Memory Engineering**: Tuned specifically to run more than 30 microservices and infrastructure containers reliably on resource-managed Cloud VPS instances.
 
 ---
 
@@ -61,16 +61,16 @@
 The platform follows a multi-tiered distributed topology separating the client experience layer, edge security perimeter, isolated domain microservices, and asynchronous event infrastructure.
 
 ### Complete System Architecture Diagram
-![FashionPin System Diagram](docs/assets/FashionPin_system_diagram.png)
+![Kymira System Diagram](docs/assets/FashionPin_system_diagram.png)
 
 ---
 
 ## 🗄️ 3. Database-Per-Service Architecture & Entity Relationship Diagram (ERD)
 
-To eliminate distributed database lock contention, schema fragility, and cross-team coupling, **FashionPin strictly adheres to the Database-per-Service pattern**.
+To eliminate distributed database lock contention, schema fragility, and cross-team coupling, **Kymira strictly adheres to the Database-per-Service pattern**.
 
 ### Entity Relationship Diagram (ERD)
-![FashionPin Entity Relationship Diagram](docs/assets/FashionPin_ERD.png)
+![Kymira Entity Relationship Diagram](docs/assets/FashionPin_ERD.png)
 
 ### Dedicated Database Topology
 Each microservice is provisioned with its own schema and credentials, preventing accidental cross-boundary queries:
@@ -92,7 +92,7 @@ Each microservice is provisioned with its own schema and credentials, preventing
 | `moodboard_db` | `moodboard-service` | Curated boards, moodboard canvas items, collaborator access |
 | `shopping_db` | `shopping-service` | Active shopping carts, line items, saved wishlists |
 | `order_db` | `order-service` | Order header, order items, state machine transitions, shipping |
-| `payment_db` | `payment-service` | Payment transactions, SSLCommerz session logs, ledger ledger |
+| `payment_db` | `payment-service` | Payment transactions, SSLCommerz session logs, ledger records |
 | `inventory_db` | `inventory-service` | Real-time SKU stock levels, warehouse reservations, stock locking |
 | `brand_integration_db` | `brand-integration-service`| B2B brand partners, designer ateliers, inventory sync webhooks |
 | `notification_db` | `notification-service` | In-app alerts, push notifications, read/unread states |
@@ -100,8 +100,8 @@ Each microservice is provisioned with its own schema and credentials, preventing
 | `media_db` | `media-service` | S3 asset metadata, upload audit trails, MIME validation logs |
 
 ### Schema Migration & Connection Pool Optimization
-- **Flyway Declarative Migrations**: Every service automatically checks and applies versioned migrations (`V1__init_schema.sql`, `V2__...`) at boot time.
-- **HikariCP Pool Sizing**: Configured with explicit `maximum-pool-size: 10`, `minimum-idle: 2`, and `connection-timeout: 20000ms` per service. With 21 services running on PostgreSQL 16, this caps total concurrent connections under 250, ensuring absolute stability without exhausting VPS socket descriptors.
+* **Flyway Declarative Migrations**: Every service automatically checks and applies versioned migrations (`V1__init_schema.sql`, `V2__...`) at boot time.
+* **HikariCP Pool Sizing**: Configured with explicit `maximum-pool-size: 10`, `minimum-idle: 2`, and `connection-timeout: 20000ms` per service. With 21 services running on PostgreSQL 16, this caps total concurrent connections under 250, ensuring absolute stability without exhausting VPS socket descriptors.
 
 ---
 
@@ -143,16 +143,16 @@ To prevent dual-write inconsistencies between the local database and the Kafka c
 
 ### 2. Idempotent Consumer Pattern
 Consumers prevent duplicate processing caused by network re-transmissions:
-- Before executing business logic, the consumer checks the `processed_events` table for `event_id`.
-- If already processed, the message is acknowledged and skipped immediately.
-- The state mutation and insertion into `processed_events` execute inside the consumer's local database transaction.
+* Before executing business logic, the consumer checks the `processed_events` table for `event_id`.
+* If already processed, the message is acknowledged and skipped immediately.
+* The state mutation and insertion into `processed_events` execute inside the consumer's local database transaction.
 
 ### Kafka Event Directory (`common-lib`)
 Defined centrally in `com.fashionpin.common.kafka.KafkaTopics`:
-- `fashionpin.user.registered.v1`: Broadcast when a user registers; consumed by `user-service`.
-- `fashionpin.user.created.v1`: Broadcast when a user profile is provisioned; consumed by `profile-service`.
-- `fashionpin.order.created.v1`: Broadcast by `order-service`; triggers stock locking in `inventory-service` and ledger creation in `payment-service`.
-- `fashionpin.payment.processed.v1`: Signals payment completion to update order status and initiate fulfillment.
+* `kymira.user.registered.v1`: Broadcast when a user registers; consumed by `user-service`.
+* `kymira.user.created.v1`: Broadcast when a user profile is provisioned; consumed by `profile-service`.
+* `kymira.order.created.v1`: Broadcast by `order-service`; triggers stock locking in `inventory-service` and ledger creation in `payment-service`.
+* `kymira.payment.processed.v1`: Signals payment completion to update order status and initiate fulfillment.
 
 ---
 
@@ -162,21 +162,21 @@ Defined centrally in `com.fashionpin.common.kafka.KafkaTopics`:
 
 ### 1. Edge Token-Bucket Rate Limiter
 Spring Cloud Gateway integrates with Redis via `RedisRateLimiter` to protect backend services against abuse and DDoS:
-- **Replenish Rate**: 20 requests per second per IP/User.
-- **Burst Capacity**: 40 requests per second.
-- **Key Resolver**: Extracts client IP or authenticated JWT principal (`X-User-Id`).
+* **Replenish Rate**: 20 requests per second per IP/User.
+* **Burst Capacity**: 40 requests per second.
+* **Key Resolver**: Extracts client IP or authenticated JWT principal (`X-User-Id`).
 
 ### 2. Cache-Aside Pattern
 Frequently read, low-mutation data is cached in Redis with designated TTLs:
-- **Taxonomy & Category Trees**: Cached with a 6-hour TTL in `fashion-discovery-service` and `product-service`.
-- **User Permission Claims**: Cached with a 15-minute TTL to accelerate gateway JWT filter passes.
-- **Session Tokens**: Fast revocation verification.
+* **Taxonomy & Category Trees**: Cached with a 6-hour TTL in `fashion-discovery-service` and `product-service`.
+* **User Permission Claims**: Cached with a 15-minute TTL to accelerate gateway JWT filter passes.
+* **Session Tokens**: Fast revocation verification.
 
 ---
 
 ## ⚡ 6. Hybrid Synchronous Communication: gRPC & Reactive REST
 
-FashionPin blends external REST openness with internal high-performance binary RPC:
+Kymira blends external REST openness with internal high-performance binary RPC:
 
 ```
                        ┌────────────────────────────────────────────────────────┐
@@ -194,26 +194,26 @@ FashionPin blends external REST openness with internal high-performance binary R
                                             └── (:9081-:9082) ┘
 ```
 
-- **North-South (Client-to-Gateway)**: Standard RESTful JSON APIs compliant with OpenAPI 3.0 specifications.
-- **East-West (Service-to-Service)**: High-speed **gRPC channels** with Protobuf contracts on dedicated secondary ports (`9081` through `9101`).
-  - **Zero Serialization Overhead**: Binary Protobuf serialization yields up to 7x faster serialization compared to JSON.
-  - **HTTP/2 Multiplexing**: Multiple parallel RPC requests are multiplexed across a single long-lived TCP connection, slashing TCP handshake latencies.
+* **North-South (Client-to-Gateway)**: Standard RESTful JSON APIs compliant with OpenAPI 3.0 specifications.
+* **East-West (Service-to-Service)**: High-speed **gRPC channels** with Protobuf contracts on dedicated secondary ports (`9081` through `9101`).
+  * **Zero Serialization Overhead**: Binary Protobuf serialization yields up to 7x faster serialization compared to JSON.
+  * **HTTP/2 Multiplexing**: Multiple parallel RPC requests are multiplexed across a single long-lived TCP connection, slashing TCP handshake latencies.
 
 ---
 
 ## 🪣 7. Cloud-Native S3 Object Storage with MinIO
 
-To handle vast volumes of high-resolution fashion media, lookbooks, and AI masks, FashionPin features dedicated **MinIO S3-Compatible Object Storage**:
+To handle vast volumes of high-resolution fashion media, lookbooks, and AI masks, Kymira features dedicated **MinIO S3-Compatible Object Storage**:
 
-- **S3 API Port**: `:9000`
-- **MinIO Console Port**: `:9001`
-- **Storage Adapter**: Implemented in [`media-service`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/media-service) via [`S3ObjectStorageAdapter.java`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/media-service/src/main/java/com/fashionpin/mediaservice/storage/S3ObjectStorageAdapter.java).
-- **Auto-Provisioned Dedicated Buckets**:
-  - `fashionpin-media`: General user attachments and uploads.
-  - `fashionpin-products`: Luxury catalog photography and high-res garment assets.
-  - `fashionpin-pins`: Social Pinterest-style pins, moodboards, and tags.
-  - `fashionpin-avatars`: User avatars and atelier banners.
-  - `fashionpin-tryon`: AI-generated virtual try-on renders and segmented masks.
+* **S3 API Port**: `:9000`
+* **MinIO Console Port**: `:9001`
+* **Storage Adapter**: Implemented in [`media-service`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/media-service) via [`S3ObjectStorageAdapter.java`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/media-service/src/main/java/com/fashionpin/mediaservice/storage/S3ObjectStorageAdapter.java).
+* **Auto-Provisioned Dedicated Buckets**:
+  * `kymira-media`: General user attachments and uploads.
+  * `kymira-products`: Luxury catalog photography and high-res garment assets.
+  * `kymira-pins`: Social Pinterest-style pins, moodboards, and tags.
+  * `kymira-avatars`: User avatars and atelier banners.
+  * `kymira-tryon`: AI-generated virtual try-on renders and segmented masks.
 
 ---
 
@@ -223,34 +223,34 @@ The backend implements end-to-end payment processing in [`payment-service`](file
 
 ### Architecture & Callbacks
 1. **Payment Session Initialization**:
-   - `POST /api/v1/payment/initiate`: Sends customer details, order reference, and amount to SSLCommerz API (`https://sandbox.sslcommerz.com/gwprocess/v4/api.php`).
-   - Receives and returns `GatewayPageURL` to the client for redirecting users to the payment portal.
+   * `POST /api/v1/payment/initiate`: Sends customer details, order reference, and amount to SSLCommerz API (`https://sandbox.sslcommerz.com/gwprocess/v4/api.php`).
+   * Receives and returns `GatewayPageURL` to the client for redirecting users to the payment portal.
 2. **Server-to-Server IPN Callbacks**:
-   - `POST /api/v1/payment/success`: Handles successful authorization; queries the SSLCommerz Validator API server-to-server to guarantee legitimacy before issuing order confirmation.
-   - `POST /api/v1/payment/fail`: Handles declined transactions.
-   - `POST /api/v1/payment/cancel`: Handles user cancellations.
+   * `POST /api/v1/payment/success`: Handles successful authorization; queries the SSLCommerz Validator API server-to-server to guarantee legitimacy before issuing order confirmation.
+   * `POST /api/v1/payment/fail`: Handles declined transactions.
+   * `POST /api/v1/payment/cancel`: Handles user cancellations.
 3. **Security Configurations**:
-   - CSRF bypass explicitly configured for payment webhook routes in [`SecurityConfig.java`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/payment-service/src/main/java/com/fashionpin/paymentservice/security/SecurityConfig.java).
-   - Dynamic credential binding: `SSLCOMMERZ_STORE_ID` and `SSLCOMMERZ_STORE_PASSWORD` are loaded strictly via environment variables.
+   * CSRF bypass explicitly configured for payment webhook routes in [`SecurityConfig.java`](file:///Users/sajid/Documents/FashionPinFullStack/FashionPinBackend/payment-service/src/main/java/com/fashionpin/paymentservice/security/SecurityConfig.java).
+   * Dynamic credential binding: `SSLCOMMERZ_STORE_ID` and `SSLCOMMERZ_STORE_PASSWORD` are loaded strictly via environment variables.
 
 ---
 
 ## 🤖 9. Artificial Intelligence, Computer Vision & Virtual Try-On
 
-FashionPin incorporates cutting-edge AI microservices directly into the microservice fabric:
+Kymira incorporates cutting-edge AI microservices directly into the microservice fabric:
 
 1. **`ai-stylist-service` (:8091)**:
-   - Intelligent GenAI conversational assistant.
-   - Generates contextual fashion recommendations based on user wardrobe history, style preferences, and seasonal trends.
+   * Intelligent GenAI conversational assistant.
+   * Generates contextual fashion recommendations based on user wardrobe history, style preferences, and seasonal trends.
 2. **`virtual-tryon-service` (:8092)**:
-   - Built on FastAPI with PyTorch diffusion pipelines.
-   - Accepts human model images and garment cutouts to generate photorealistic virtual fitting room previews.
+   * Built on FastAPI with PyTorch diffusion pipelines.
+   * Accepts human model images and garment cutouts to generate photorealistic virtual fitting room previews.
 3. **`outfit-detection-service` (:8087)**:
-   - Automated computer vision segmentation.
-   - Detects garments within uploaded pins and breaks them down into individual shoppable product tags.
+   * Automated computer vision segmentation.
+   * Detects garments within uploaded pins and breaks them down into individual shoppable product tags.
 4. **`visual-search-service` (:8089)**:
-   - Generates deep image vector embeddings.
-   - Performs cosine similarity lookups against the product catalog to enable "Shop the Look" image search.
+   * Generates deep image vector embeddings.
+   * Performs cosine similarity lookups against the product catalog to enable "Shop the Look" image search.
 
 ---
 
@@ -260,9 +260,9 @@ The complete fleet consists of 24 interconnected services and infrastructure com
 
 | # | Service Name | Domain | REST Port | gRPC Port | Dedicated DB | Health Endpoint | Direct Swagger UI Link |
 | :-: | :--- | :--- | :-: | :-: | :--- | :--- | :--- |
-| **0** | **api-gateway** | Edge Perimeter & Router | `8080` | — | — | `/actuator/health` | [Swagger Hub :8080](http://<SERVER_IP>:8080/swagger-ui.html) |
-| **1** | **discovery-service** | Eureka Registry | `8761` | — | — | `/eureka/apps` | Eureka Dashboard |
-| **2** | **config-server** | Cloud Configuration | `8888` | — | — | `/actuator/health` | Config API |
+| **0** | **api-gateway** | Edge Perimeter & Router | `8080` | None | None | `/actuator/health` | [Swagger Hub :8080](http://<SERVER_IP>:8080/swagger-ui.html) |
+| **1** | **discovery-service** | Eureka Registry | `8761` | None | None | `/eureka/apps` | Eureka Dashboard |
+| **2** | **config-server** | Cloud Configuration | `8888` | None | None | `/actuator/health` | Config API |
 | **3** | **auth-service** | Identity & Security | `8081` | `9081` | `auth_db` | `/actuator/health` | [Swagger :8081](http://<SERVER_IP>:8081/swagger-ui/index.html) |
 | **4** | **user-service** | Accounts & Users | `8082` | `9082` | `user_db` | `/actuator/health` | [Swagger :8082](http://<SERVER_IP>:8082/swagger-ui/index.html) |
 | **5** | **profile-service** | Social Graph & Style DNA | `8083` | `9083` | `profile_db` | `/actuator/health` | [Swagger :8083](http://<SERVER_IP>:8083/swagger-ui/index.html) |
@@ -284,10 +284,10 @@ The complete fleet consists of 24 interconnected services and infrastructure com
 | **21**| **notification-service** | Push Alerts & SSE | `8099` | `9099` | `notification_db` | `/actuator/health` | [Swagger :8099](http://<SERVER_IP>:8099/swagger-ui/index.html) |
 | **22**| **analytics-service** | Clickstream & GMV | `8100` | `9100` | `analytics_db` | `/actuator/health` | [Swagger :8100](http://<SERVER_IP>:8100/swagger-ui/index.html) |
 | **23**| **media-service** | Asset CDN & S3 Adapter | `8101` | `9101` | `media_db` | `/actuator/health` | [Swagger :8101](http://<SERVER_IP>:8101/swagger-ui/index.html) |
-| **Infra**| **MinIO S3 Storage** | S3 API & Console | `9000` / `9001` | — | — | `/minio/health/live` | MinIO Console |
-| **Infra**| **Grafana Monitoring**| Dashboards | `3000` | — | — | `/api/health` | Grafana UI |
-| **Infra**| **Prometheus** | Metrics Scraper | `9090` | — | — | `/-/healthy` | Prometheus UI |
-| **Infra**| **Zipkin** | Distributed Tracing | `9411` | — | — | `/actuator/health` | Zipkin UI |
+| **Infra**| **MinIO S3 Storage** | S3 API & Console | `9000` / `9001` | None | None | `/minio/health/live` | MinIO Console |
+| **Infra**| **Grafana Monitoring**| Dashboards | `3000` | None | None | `/api/health` | Grafana UI |
+| **Infra**| **Prometheus** | Metrics Scraper | `9090` | None | None | `/-/healthy` | Prometheus UI |
+| **Infra**| **Zipkin** | Distributed Tracing | `9411` | None | None | `/actuator/health` | Zipkin UI |
 
 ---
 
@@ -300,14 +300,14 @@ Running over 20 Spring Boot microservices simultaneously can easily overwhelm sy
 ```bash
 JAVA_OPTS="-Xms64m -Xmx256m -XX:+UseG1GC -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 ```
-- **Tiered Compilation (`-XX:TieredStopAtLevel=1`)**: Accelerates JVM startup time and slashes baseline memory overhead.
-- **G1 Garbage Collector (`-XX:+UseG1GC`)**: Provides predictable pauses and releases unused memory back to the operating system.
-- **Linux Swap Allocation**: Configured an 8GB NVMe swap space with `swappiness=10` to absorb transient build/startup spikes without triggering the Linux OOM-killer.
+* **Tiered Compilation (`-XX:TieredStopAtLevel=1`)**: Accelerates JVM startup time and slashes baseline memory overhead.
+* **G1 Garbage Collector (`-XX:+UseG1GC`)**: Provides predictable pauses and releases unused memory back to the operating system.
+* **Linux Swap Allocation**: Configured an 8GB NVMe swap space with `swappiness=10` to absorb transient build/startup spikes without triggering the Linux OOM-killer.
 
 ### 2. Zero-Trust Container Network Architecture
-All containers communicate over an isolated bridge network: `fashionpin-net`.
-- **Internal DNS Resolution**: Containers address each other by service name (`postgres:5432`, `kafka:9092`, `redis:6379`, `discovery-service:8761`).
-- **Internal Shielding**: PostgreSQL, Redis, Kafka, and Zookeeper have **no public ports bound to the host**. They are physically inaccessible from the public internet.
+All containers communicate over an isolated bridge network: `kymira-net`.
+* **Internal DNS Resolution**: Containers address each other by service name (`postgres:5432`, `kafka:9092`, `redis:6379`, `discovery-service:8761`).
+* **Internal Shielding**: PostgreSQL, Redis, Kafka, and Zookeeper have **no public ports bound to the host**. They are physically inaccessible from the public internet.
 
 ### 3. Perimeter Firewall Security (Ubuntu UFW)
 The Contabo VPS host firewall is hardened with strict rules:
@@ -340,23 +340,23 @@ python3 scripts/verify-microservices.py --host <SERVER_IP>
 
 ## 📊 12. Observability, Telemetry & Distributed Tracing
 
-FashionPin implements comprehensive, production-grade observability across three distinct pillars:
+Kymira implements comprehensive, production-grade observability across three distinct pillars:
 
 1. **Metrics Collection (Prometheus)**:
-   - Prometheus scrapes `/actuator/prometheus` across all Spring Boot containers every 15 seconds.
-   - Captures JVM heap/non-heap memory, garbage collection pause times, active HTTP request rates, and HikariCP connection pool usage.
+   * Prometheus scrapes `/actuator/prometheus` across all Spring Boot containers every 15 seconds.
+   * Captures JVM heap/non-heap memory, garbage collection pause times, active HTTP request rates, and HikariCP connection pool usage.
 2. **Telemetry Visualization (Grafana)**:
-   - Hosted on `:3000` with pre-provisioned dashboards.
-   - Visualizes real-time request rates, p95/p99 latency percentiles, error rates, and CPU/memory utilization per container.
+   * Hosted on `:3000` with pre-provisioned dashboards.
+   * Visualizes real-time request rates, p95/p99 latency percentiles, error rates, and CPU/memory utilization per container.
 3. **Distributed Tracing (Zipkin)**:
-   - Micrometer Tracing bridge propagates W3C trace contexts and `X-Correlation-Id` across the API Gateway and downstream microservices.
-   - Traces are stored in Zipkin (`:9411`), enabling developers to inspect the exact call lifecycle and latency bottlenecks of any multi-service transaction.
+   * Micrometer Tracing bridge propagates W3C trace contexts and `X-Correlation-Id` across the API Gateway and downstream microservices.
+   * Traces are stored in Zipkin (`:9411`), enabling developers to inspect the exact call lifecycle and latency bottlenecks of any multi-service transaction.
 
 ---
 
 ## 🏎️ 13. High-Scale Blueprint: Engineered for 4 Million+ Users
 
-The FashionPin backend architecture is engineered from the ground up to scale out horizontally to support **4 Million+ Active Users** and high-throughput enterprise traffic without architectural bottlenecks:
+The Kymira backend architecture is engineered from the ground up to scale out horizontally to support **4 Million+ Active Users** and high-throughput enterprise traffic without architectural bottlenecks:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -386,16 +386,16 @@ The FashionPin backend architecture is engineered from the ground up to scale ou
 
 ### Architectural Pillars for 4 Million+ Scale
 1. **Stateless Microservices & Elastic Horizontal Scaling**:
-   - Every service is completely stateless with session and authentication delegated to signed JWTs and Redis.
-   - Deploys seamlessly on Kubernetes with Horizontal Pod Autoscaling (HPA) based on CPU and request latency thresholds.
+   * Every service is completely stateless with session and authentication delegated to signed JWTs and Redis.
+   * Deploys seamlessly on Kubernetes with Horizontal Pod Autoscaling (HPA) based on CPU and request latency thresholds.
 2. **Multi-Partitioned Event Streaming with Apache Kafka**:
-   - High-volume transaction topics (`order.created`, `user.registered`, `payment.processed`) are partitioned across multiple Kafka brokers.
-   - Consumer groups scale out horizontally to process hundreds of thousands of asynchronous events per second with zero message loss.
+   * High-volume transaction topics (`order.created`, `user.registered`, `payment.processed`) are partitioned across multiple Kafka brokers.
+   * Consumer groups scale out horizontally to process hundreds of thousands of asynchronous events per second with zero message loss.
 3. **Database-Per-Service with Read-Replicas & PgBouncer**:
-   - Segregated schemas eliminate global lock contention across services.
-   - Read-heavy queries (e.g., visual feed browsing, catalog search) scale through dedicated read-replicas, while write operations are isolated to primaries.
+   * Segregated schemas eliminate global lock contention across services.
+   * Read-heavy queries (e.g., visual feed browsing, catalog search) scale through dedicated read-replicas, while write operations are isolated to primaries.
 4. **Edge CDN Offload for Media Assets**:
-   - MinIO S3 object storage integrates with CDN edge caching (e.g., Cloudflare), serving 95%+ of visual pin images, avatar lookbooks, and virtual try-on renders directly from the edge.
+   * MinIO S3 object storage integrates with CDN edge caching (e.g., Cloudflare), serving 95%+ of visual pin images, avatar lookbooks, and virtual try-on renders directly from the edge.
 
 ### Performance Load Testing Suite (`load-tests/`)
 To benchmark gateway throughput, connection limits, and latency percentiles under heavy simulated user concurrency, an automated **k6 load testing harness** is included:
@@ -415,10 +415,10 @@ Visual reports and latency distribution percentiles are automatically generated 
 ## 🛠️ 14. Local Developer Quickstart & Configuration
 
 ### Prerequisites
-- **JDK 21** (Eclipse Temurin recommended)
-- **Maven 3.9+** (or use included `./mvnw`)
-- **Docker & Docker Compose v2+**
-- **Python 3.10+** (for fleet verifier script & virtual try-on service)
+* **JDK 21** (Eclipse Temurin recommended)
+* **Maven 3.9+** (or use included `./mvnw`)
+* **Docker & Docker Compose v2+**
+* **Python 3.10+** (for fleet verifier script & virtual try-on service)
 
 ### 1. Clone & Configure Environment
 ```bash
@@ -452,5 +452,5 @@ python3 scripts/verify-microservices.py --host localhost
 ---
 
 <div align="center">
-  <sub>Engineered with passion, precision, and architectural discipline for FashionPin.</sub>
+  <sub>Engineered with passion, precision, and architectural discipline for Kymira.</sub>
 </div>
