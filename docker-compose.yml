@@ -614,6 +614,8 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       ZIPKIN_URL: http://zipkin:9411/api/v2/spans
       GRPC_PORT: "9096"
+      SSLCOMMERZ_STORE_ID: ${SSLCOMMERZ_STORE_ID:-}
+      SSLCOMMERZ_STORE_PASSWORD: ${SSLCOMMERZ_STORE_PASSWORD:-}
     depends_on:
       - discovery-service
       - config-server

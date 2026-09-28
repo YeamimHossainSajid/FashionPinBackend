@@ -116,10 +116,7 @@ spring:
       - id: payment-service
         uri: lb://payment-service
         predicates:
-          - Path=/api/v1/payment/**
-        filters:
-          - RewritePath=/api/v1/payment(?<segment>/?.*), /api/v1${segment}
-          # Rate limiting placeholder: enable RequestRateLimiter when Redis is available.
+          - Path=/api/payment/**, /api/v1/payment/**
 
       - id: inventory-service
         uri: lb://inventory-service

@@ -88,6 +88,15 @@ grpc:
     globally:
       negotiation-type: plaintext
 
+sslcommerz:
+  store-id: ${SSLCOMMERZ_STORE_ID:}
+  store-password: ${SSLCOMMERZ_STORE_PASSWORD:}
+  init-url: ${SSLCOMMERZ_INIT_URL:https://sandbox.sslcommerz.com/gwprocess/v4/api.php}
+  validation-url: ${SSLCOMMERZ_VALIDATION_URL:https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php}
+  backend-url: ${BACKEND_URL:http://localhost:8080}
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
+
 logging:
   config: classpath:logback-spring.xml
 

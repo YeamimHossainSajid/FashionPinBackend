@@ -1,9 +1,16 @@
 package com.fashionpin.paymentservice.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class ApplicationConfig {
-    // Placeholder for service-level beans and infrastructure wiring.
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 }
+
 

@@ -22,7 +22,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                // Explicitly disable CSRF for external payment gateway callback endpoints
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        "/api/payment/success",
+                        "/api/payment/fail",
+                        "/api/payment/cancel",
+                        "/api/payment/ipn",
+                        "/api/v1/payment/success",
+                        "/api/v1/payment/fail",
+                        "/api/v1/payment/cancel",
+                        "/api/v1/payment/ipn"
+                ))
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -32,7 +43,9 @@ public class SecurityConfig {
                                 "/api/v1/health",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html")
+                                "/swagger-ui.html",
+                                "/api/payment/**",
+                                "/api/v1/payment/**")
                         .permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
