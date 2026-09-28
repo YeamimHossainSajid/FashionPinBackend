@@ -422,8 +422,8 @@ Visual reports and latency distribution percentiles are automatically generated 
 
 ### 1. Clone & Configure Environment
 ```bash
-git clone https://github.com/YeamimHossainSajid/FashionPinBackend.git
-cd FashionPinBackend
+git clone https://github.com/YeamimHossainSajid/Kymira.git
+cd Kymira
 
 # Copy sample environment configuration
 cp .env.example .env
