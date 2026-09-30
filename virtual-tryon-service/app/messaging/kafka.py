@@ -92,42 +92,68 @@ class KafkaMessagingClient:
             logger.info(f"Duplicate event received event_id={event_id}, skipping processing")
             return
 
-        person_url = message.get("person_image_url") or message.get("personImageUrl")
-        garment_url = message.get("garment_image_url") or message.get("garmentImageUrl")
-        category_str = message.get("garment_category") or message.get("garmentCategory") or "UPPER_BODY"
+        job_id = None
+        try:
+            person_url = message.get("person_image_url") or message.get("personImageUrl")
+            garment_url = message.get("garment_image_url") or message.get("garmentImageUrl")
+            category_str = message.get("garment_category") or message.get("garmentCategory") or "UPPER_BODY"
 
-        if not person_url or not garment_url:
-            logger.warning(f"Invalid Kafka message structure: {message}")
-            return
+            if not person_url or not garment_url:
+                logger.warning(f"Invalid Kafka message structure: {message}")
+                if event_id:
+                    self.publish_event(self.topic_failed, str(event_id), {
+                        "job_id": str(event_id),
+                        "status": "FAILED",
+                        "reason": "Missing person_image_url or garment_image_url"
+                    })
+                return
 
-        if event_id:
-            self._processed_event_ids.add(event_id)
+            if event_id:
+                self._processed_event_ids.add(event_id)
 
-        category = GarmentCategory(category_str)
-        req = CreateVTONJobRequest(
-            person_image_url=person_url,
-            garment_image_url=garment_url,
-            garment_category=category
-        )
+            # Safe category parsing
+            try:
+                category = GarmentCategory(category_str)
+            except ValueError:
+                cat_upper = str(category_str).upper()
+                if cat_upper in GarmentCategory.__members__:
+                    category = GarmentCategory[cat_upper]
+                else:
+                    category = GarmentCategory.UPPER_BODY
 
-        job = job_processor.create_job(req)
-        self.publish_event(self.topic_completed, job.job_id, {"job_id": job.job_id, "status": "PROCESSING"})
+            req = CreateVTONJobRequest(
+                person_image_url=person_url,
+                garment_image_url=garment_url,
+                garment_category=category
+            )
 
-        result_job = job_processor.execute_job(job.job_id, req)
+            job = job_processor.create_job(req)
+            job_id = job.job_id
+            self.publish_event(self.topic_completed, job.job_id, {"job_id": job.job_id, "status": "PROCESSING"})
 
-        if result_job.status == "COMPLETED":
-            self.publish_event(self.topic_completed, result_job.job_id, {
-                "job_id": result_job.job_id,
-                "status": "COMPLETED",
-                "result_url": result_job.result_url,
-                "quality_score": result_job.quality_score,
-                "model_version": result_job.model_version
-            })
-        else:
-            self.publish_event(self.topic_failed, result_job.job_id, {
-                "job_id": result_job.job_id,
+            result_job = job_processor.execute_job(job.job_id, req)
+
+            if result_job.status == JobStatus.COMPLETED or result_job.status == "COMPLETED":
+                self.publish_event(self.topic_completed, result_job.job_id, {
+                    "job_id": result_job.job_id,
+                    "status": "COMPLETED",
+                    "result_url": result_job.result_url,
+                    "quality_score": result_job.quality_score,
+                    "model_version": result_job.model_version
+                })
+            else:
+                self.publish_event(self.topic_failed, result_job.job_id, {
+                    "job_id": result_job.job_id,
+                    "status": "FAILED",
+                    "reason": result_job.failure_reason
+                })
+        except Exception as e:
+            fallback_id = job_id or event_id or "unknown_job"
+            logger.error(f"Kafka message processing failed for {fallback_id}: {e}", exc_info=True)
+            self.publish_event(self.topic_failed, str(fallback_id), {
+                "job_id": str(fallback_id),
                 "status": "FAILED",
-                "reason": result_job.failure_reason
+                "reason": f"Unhandled consumer error: {str(e)}"
             })
 
 kafka_client = KafkaMessagingClient()
