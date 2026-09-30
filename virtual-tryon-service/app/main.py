@@ -39,6 +39,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+import uuid
+from app.core.logging import logger, set_correlation_id
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -46,6 +49,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    correlation_id = request.headers.get("X-Correlation-Id") or request.headers.get("X-Request-Id") or str(uuid.uuid4())
+    set_correlation_id(correlation_id)
+    response = await call_next(request)
+    response.headers["X-Correlation-Id"] = correlation_id
+    return response
 
 @app.exception_handler(VTONException)
 async def vton_exception_handler(request: Request, exc: VTONException):
