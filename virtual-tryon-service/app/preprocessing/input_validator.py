@@ -2,7 +2,7 @@ import io
 from typing import Tuple, Dict, Any, Optional
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 from app.core.exceptions import VTONException, ErrorCode
 from app.core.logging import logger
 
@@ -20,7 +20,20 @@ class InputValidator:
             )
 
         try:
-            pil_img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            raw_img = Image.open(io.BytesIO(image_bytes))
+            # Correct orientation from EXIF metadata (essential for smartphone photos)
+            transposed_img = ImageOps.exif_transpose(raw_img)
+            if transposed_img is not None:
+                raw_img = transposed_img
+
+            # Handle transparency (RGBA, LA, P with transparency) by compositing over clean white background
+            if raw_img.mode in ("RGBA", "LA") or (raw_img.mode == "P" and "transparency" in raw_img.info):
+                rgba_img = raw_img.convert("RGBA")
+                background = Image.new("RGBA", rgba_img.size, (255, 255, 255, 255))
+                composited = Image.alpha_composite(background, rgba_img)
+                pil_img = composited.convert("RGB")
+            else:
+                pil_img = raw_img.convert("RGB")
         except Exception as e:
             raise VTONException(
                 code=ErrorCode.CORRUPTED_IMAGE,
