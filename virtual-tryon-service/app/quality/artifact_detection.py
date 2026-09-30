@@ -4,8 +4,36 @@ from PIL import Image
 
 class ArtifactDetector:
     """
-    Visual artifact & structural anomaly detector.
+    Visual artifact & structural anomaly detector using SSIM and high-frequency edge analysis.
     """
+
+    @classmethod
+    def compute_ssim(cls, img1: np.ndarray, img2: np.ndarray) -> float:
+        """
+        Computes Structural Similarity Index (SSIM) between two grayscale images.
+        """
+        c1 = (0.01 * 255) ** 2
+        c2 = (0.03 * 255) ** 2
+
+        img1 = img1.astype(np.float64)
+        img2 = img2.astype(np.float64)
+
+        kernel = cv2.getGaussianKernel(11, 1.5)
+        window = np.outer(kernel, kernel.transpose())
+
+        mu1 = cv2.filter2D(img1, -1, window)[5:-5, 5:-5]
+        mu2 = cv2.filter2D(img2, -1, window)[5:-5, 5:-5]
+
+        mu1_sq = mu1 ** 2
+        mu2_sq = mu2 ** 2
+        mu1_mu2 = mu1 * mu2
+
+        sigma1_sq = cv2.filter2D(img1 ** 2, -1, window)[5:-5, 5:-5] - mu1_sq
+        sigma2_sq = cv2.filter2D(img2 ** 2, -1, window)[5:-5, 5:-5] - mu2_sq
+        sigma12 = cv2.filter2D(img1 * img2, -1, window)[5:-5, 5:-5] - mu1_mu2
+
+        ssim_map = ((2 * mu1_mu2 + c1) * (2 * sigma12 + c2)) / ((mu1_sq + mu2_sq + c1) * (sigma1_sq + sigma2_sq + c2))
+        return float(np.clip(ssim_map.mean(), 0.0, 1.0))
 
     @classmethod
     def evaluate_artifacts(cls, final_img: Image.Image, original_img: Image.Image) -> float:
@@ -19,16 +47,21 @@ class ArtifactDetector:
         if np.isnan(final_np).any() or np.isinf(final_np).any():
             return 0.0
 
-        # Structural Mean Absolute Error outside boundary
-        diff = np.abs(final_np.astype(np.float32) - orig_np.astype(np.float32))
-        mae = np.mean(diff) / 255.0
+        # Grayscale conversion for structural analysis
+        gray_final = cv2.cvtColor(final_np, cv2.COLOR_RGB2GRAY)
+        gray_orig = cv2.cvtColor(orig_np, cv2.COLOR_RGB2GRAY)
 
-        # Gradient variance check for unnatural high-frequency noise
-        gray = cv2.cvtColor(final_np, cv2.COLOR_RGB2GRAY)
-        laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
+        # High-frequency noise / unnatural blur check using Laplacian
+        laplacian_var = float(cv2.Laplacian(gray_final, cv2.CV_64F).var())
+        if laplacian_var > 6000.0 or laplacian_var < 5.0:
+            # Extreme noise or total blur anomaly
+            penalty = 0.4
+        else:
+            penalty = 0.0
 
-        if laplacian_var > 5000.0:
-            return 0.50
+        # SSIM calculation
+        ssim_val = cls.compute_ssim(gray_final, gray_orig)
 
-        score = max(0.0, min(1.0, 1.0 - (mae * 0.5)))
+        # Combine SSIM with noise penalty
+        score = max(0.0, min(1.0, ssim_val - penalty))
         return round(float(score), 4)

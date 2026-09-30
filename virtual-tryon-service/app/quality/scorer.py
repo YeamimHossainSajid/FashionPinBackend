@@ -87,4 +87,31 @@ class QualityEngine:
         return round(float(sim), 4)
 
     def _compute_structure_score(self, final_img: Image.Image, orig_img: Image.Image) -> float:
-        return 0.92
+        import cv2
+        f_np = np.array(final_img.convert("RGB"))
+        o_np = np.array(orig_img.convert("RGB"))
+
+        if f_np.shape != o_np.shape:
+            o_np = cv2.resize(o_np, (f_np.shape[1], f_np.shape[0]))
+
+        f_gray = cv2.cvtColor(f_np, cv2.COLOR_RGB2GRAY)
+        o_gray = cv2.cvtColor(o_np, cv2.COLOR_RGB2GRAY)
+
+        # Sobel edge gradient magnitude
+        f_edge_x = cv2.Sobel(f_gray, cv2.CV_32F, 1, 0, ksize=3)
+        f_edge_y = cv2.Sobel(f_gray, cv2.CV_32F, 0, 1, ksize=3)
+        f_mag = cv2.magnitude(f_edge_x, f_edge_y)
+
+        o_edge_x = cv2.Sobel(o_gray, cv2.CV_32F, 1, 0, ksize=3)
+        o_edge_y = cv2.Sobel(o_gray, cv2.CV_32F, 0, 1, ksize=3)
+        o_mag = cv2.magnitude(o_edge_x, o_edge_y)
+
+        # Normalized cross correlation of gradient magnitudes
+        f_norm = f_mag - np.mean(f_mag)
+        o_norm = o_mag - np.mean(o_mag)
+        denominator = (np.linalg.norm(f_norm) * np.linalg.norm(o_norm)) + 1e-7
+        corr = float(np.sum(f_norm * o_norm) / denominator)
+
+        # Bound to [0.0, 1.0]
+        structure_score = max(0.0, min(1.0, (corr + 1.0) / 2.0))
+        return round(float(structure_score), 4)
